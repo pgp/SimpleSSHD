@@ -30,10 +30,12 @@
 #include "runopts.h"
 #include "dbrandom.h"
 #include "crypto_desc.h"
+#include <unwind.h>
+#include <dlfcn.h>
+#include <sys/ucontext.h>
 
 static size_t listensockets(int *sock, size_t sockcount, int *maxfd);
 static void sigchld_handler(int dummy);
-static void sigsegv_handler(int);
 static void sigintterm_handler(int fish);
 #if INETD_MODE
 static void main_inetd(void);
@@ -193,7 +195,9 @@ static void main_noinetd() {
 			}
 		}
 
+fprintf(stderr,"server select in\n");
 		val = select(maxsock+1, &fds, NULL, NULL, NULL);
+fprintf(stderr,"server select out (%d)\n", (int)val);
 
 		if (ses.exitflag) {
 			unlink(svr_opts.pidfile);
@@ -345,7 +349,9 @@ static void sigchld_handler(int UNUSED(unused)) {
 
 	const int saved_errno = errno;
 
+fprintf(stderr,"sigchld\n");
 	while(waitpid(-1, NULL, WNOHANG) > 0) {}
+fprintf(stderr,"sigchld return from waitpid\n");
 
 	sa_chld.sa_handler = sigchld_handler;
 	sa_chld.sa_flags = SA_NOCLDSTOP;
@@ -356,10 +362,64 @@ static void sigchld_handler(int UNUSED(unused)) {
 	errno = saved_errno;
 }
 
+static volatile uintptr_t stack[16];
+static volatile int stack_count;
+static _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void* arg)
+{
+    uintptr_t pc = _Unwind_GetIP(context);
+    if (pc) {
+        if (stack_count >= sizeof stack / sizeof stack[0]) {
+            return _URC_END_OF_STACK;
+        } else {
+            stack[stack_count++] = pc;
+        }
+    }
+    return _URC_NO_REASON;
+}
+static void
+dump_sym(uintptr_t addr)
+{
+	char* symbol = "";
+	Dl_info info;
+	if (dladdr((void*)addr, &info)) {
+		if (info.dli_sname) {
+			fprintf(stderr, "%016llX (%s=%016llX)\n", (unsigned long long)addr, info.dli_sname, (unsigned long long)info.dli_saddr);
+		} else if (info.dli_fname) {
+			fprintf(stderr, "%016llX (f %s=%016llX)\n", (unsigned long long)addr, info.dli_fname, (unsigned long long)info.dli_fbase);
+		} else {
+			fprintf(stderr, "%016llX\n", (unsigned long long)addr);
+		}
+	} else {
+		fprintf(stderr, "%016llX (no dladdr)\n", (unsigned long long)addr);
+	}
+}
+
+static void backtrace(void) {
+	int i;
+
+	stack_count = 0;
+	_Unwind_Backtrace(unwindCallback, NULL);
+fprintf(stderr, "stack:\n");
+	for (i = 0; i < stack_count; i++) {
+		dump_sym(stack[i]);
+	}
+}
+
 /* catch any segvs */
-static void sigsegv_handler(int UNUSED(unused)) {
+static void sigsegv_handler(int sig, siginfo_t *info, void *ucontext) {
+	struct sigcontext *ctx = &((ucontext_t *)ucontext)->uc_mcontext;
 	fprintf(stderr, "Aiee, segfault! You should probably report "
 			"this as a bug to the developer\n");
+#if defined(__aarch64__)
+	fprintf(stderr,"sp=%016llX\n", (unsigned long long)ctx->sp);
+	fprintf(stderr,"fault_address=%016llX\n", (unsigned long long)ctx->fault_address);
+	fprintf(stderr, "pc=");
+	dump_sym(ctx->pc);
+{ int i; for (i = 0; i < 31; i++) { fprintf(stderr,"r%d=%016llX\n", i, (unsigned long long)ctx->regs[i]); } }
+#else
+fprintf(stderr,"not aarch64\n");
+#endif
+backtrace();
 	_exit(EXIT_FAILURE);
 }
 
@@ -395,9 +455,18 @@ static void commonsetup() {
 	if (sigaction(SIGCHLD, &sa_chld, NULL) < 0) {
 		dropbear_exit("signal() error");
 	}
-	if (signal(SIGSEGV, sigsegv_handler) == SIG_ERR) {
-		dropbear_exit("signal() error");
-	}
+{
+  struct sigaction sa;
+
+  sa.sa_sigaction = sigsegv_handler;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = SA_RESTART|SA_SIGINFO;
+  sigaction(SIGSEGV, &sa, NULL);
+}
+
+//	if (signal(SIGSEGV, sigsegv_handler) == SIG_ERR) {
+//		dropbear_exit("signal() error");
+//	}
 
 	crypto_init();
 
