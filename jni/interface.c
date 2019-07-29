@@ -141,11 +141,15 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		char *argv[100] = { "sshd", NULL };
 		int argc = 1;
 		const char *logfn;
+		const char *logfn_old;
 		int logfd;
 		int retval;
 		int i;
 
 		logfn = conf_path_file("dropbear.err");
+		logfn_old = conf_path_file("dropbear.err.old");
+		unlink(logfn_old);
+		rename(logfn, logfn_old);
 		unlink(logfn);
 		logfd = open(logfn, O_CREAT|O_WRONLY, 0666);
 		if (logfd != -1) {
