@@ -898,6 +898,8 @@ the manifest...
 allowBackup="false" took immediate effect and had no surprises...
 
 
+XXX - track down SIGSEGV on android pie arm64, using sigsegv_dump branch
+XXX - why doesn't commit 73d4406ee1f02c3403d3c176e1104c8b35d44902 work the first time - it should always restart when it crashes, not just on subsequent restarts
 
 --- new release
 
