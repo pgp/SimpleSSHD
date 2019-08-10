@@ -898,8 +898,76 @@ the manifest...
 allowBackup="false" took immediate effect and had no surprises...
 
 
-XXX - track down SIGSEGV on android pie arm64, using sigsegv_dump branch
+August 4, 2019.
+
+I finally got a dump from a user (Hammad), and it's quite distressing.
+The stack trace is roughly:
+   backtrace()
+   sigsegv_handler()
+   /system/bin/app_process64+0x2a90
+   __kernel_rt_sigreturn()
+   A5xContext::HwAddNop(unsigned int *, unsigned int)
+   EsxCmdMgr::IssuePendingIB1s(EsxFlushReason, int, int)
+   EsxCmdMgr::Flush(EsxFlushReason)
+   EsxContext::Destroy()
+   EglContext::DestroyEsxContext()
+   EglDisplay::MarkContextListForDestroy()
+   EglDisplay::Terminate(int)
+   EglDisplayList::Destroy()
+   EglDisplay::DestroyStaticListsMutexesAndTlsKeys()
+   EsxEntryDestruct()
+   /system/vendor/lib64/egl/libGLESv2_adreno.so+0x12780
+   [... cut off at 16 ...]
+
+So many questions!  I think app_process64 must be the actual C main() of
+a process, responsible for branching into all the android system
+libraries?  I imagine it's involved because it's somehow intercepted the
+SIGSEGV and re-dispatched it to my handler?  I don't see any way we could
+have branched into libGLESv2_adreno from userland, so the SIGSEGV must
+come from the UI thread, I guess?  Maybe this SIGSEGV is actually the
+sort of thing we'd get if we tried to call UI code from the non-UI
+thread??
+
+It looks like GLES is busy cleaning itself up, and it crashes.  Why's it
+crash?  Why's it trying to clean itself up?
+
+Hammad says there is no problem using sshd...I thought he meant that the
+re-start logic is working for him but his dropbear.err has multiple dumps
+in it!  The SIGSEGVs are apparently not killing the daemon.
+
+There are no timestamps on the dumps, but it looks like they're
+associated with activity anyways.  Each dump happens between "Disconnect
+received" and "sigchld".  Some of them have "server select out"
+interleaved into the dump, which I think is the result of Hammad running:
+   while true; do ssh phone 'exit'; done
+That is, it appears he starts a new connection the very instant the old
+connection ends.  So the new connection comes into the server process
+while the child process is in the act of dying.
+
+The thing is, I don't see how it could possibly be getting signals from
+the Java side of things, because it fork()s before setting up the signal
+handling.  It's not just running in a different thread, it should be a
+totally separate process.  I can test this but I don't think I'm wrong
+about that.
+
+So I guess just about the only thing that's really possible is that
+there's an atexit() which survives the fork() because it isn't followed
+up with an execve().  It's not caused by ARM, or even necessarily by
+Android 9...the reason it doesn't show up in the emulator is that the
+libGLES that registers the atexit() is vendor-supplied for specific
+hardware ("Adreno").
+
+So I need to figure out how to bypass the atexit() somehow, perhaps by
+calling _exit() directly?
+
+
 XXX - why doesn't commit 73d4406ee1f02c3403d3c176e1104c8b35d44902 work the first time - it should always restart when it crashes, not just on subsequent restarts
+XXX - merge back into main branch, because I'll want to keep the dump facility
+XXX - make the dump go deeper in the stack
+XXX - put a crash in an atexit() to be sure it presents about this way
+XXX - test re-start mechanism, which doesn't seem to work on the first try if it crashes
+XXX - test bypassing that crash (register an atexit() just after the fork that calls _Exit(0))
+XXX - remove the crash, remove the debug fprintfs (select in/out, sigchld)
 
 --- new release
 
