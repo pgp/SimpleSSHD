@@ -962,7 +962,6 @@ calling _exit() directly?
 
 
 XXX - why doesn't commit 73d4406ee1f02c3403d3c176e1104c8b35d44902 work the first time - it should always restart when it crashes, not just on subsequent restarts
-XXX - merge back into main branch, because I'll want to keep the dump facility
 XXX - make the dump go deeper in the stack
 XXX - put a crash in an atexit() to be sure it presents about this way
 XXX - test re-start mechanism, which doesn't seem to work on the first try if it crashes
