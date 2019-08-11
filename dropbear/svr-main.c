@@ -362,7 +362,8 @@ fprintf(stderr,"sigchld return from waitpid\n");
 	errno = saved_errno;
 }
 
-static volatile uintptr_t stack[16];
+
+static volatile uintptr_t stack[128];
 static volatile int stack_count;
 static _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void* arg)
 {
@@ -376,6 +377,7 @@ static _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void*
     }
     return _URC_NO_REASON;
 }
+
 static void
 dump_sym(uintptr_t addr)
 {
@@ -394,32 +396,34 @@ dump_sym(uintptr_t addr)
 	}
 }
 
-static void backtrace(void) {
-	int i;
-
-	stack_count = 0;
-	_Unwind_Backtrace(unwindCallback, NULL);
-fprintf(stderr, "stack:\n");
-	for (i = 0; i < stack_count; i++) {
-		dump_sym(stack[i]);
-	}
-}
 
 /* catch any segvs */
 static void sigsegv_handler(int sig, siginfo_t *info, void *ucontext) {
-	struct sigcontext *ctx = &((ucontext_t *)ucontext)->uc_mcontext;
+	int i;
+
 	fprintf(stderr, "Aiee, segfault! You should probably report "
 			"this as a bug to the developer\n");
+
 #if defined(__aarch64__)
+	struct sigcontext *ctx = &((ucontext_t *)ucontext)->uc_mcontext;
 	fprintf(stderr,"sp=%016llX\n", (unsigned long long)ctx->sp);
 	fprintf(stderr,"fault_address=%016llX\n", (unsigned long long)ctx->fault_address);
 	fprintf(stderr, "pc=");
 	dump_sym(ctx->pc);
-{ int i; for (i = 0; i < 31; i++) { fprintf(stderr,"r%d=%016llX\n", i, (unsigned long long)ctx->regs[i]); } }
+	for (i = 0; i < 31; i++) {
+		fprintf(stderr,"r%d=%016llX\n", i, (unsigned long long)ctx->regs[i]);
+	}
 #else
-fprintf(stderr,"not aarch64\n");
+	fprintf(stderr,"not aarch64\n");
 #endif
-backtrace();
+
+	stack_count = 0;
+	_Unwind_Backtrace(unwindCallback, NULL);
+	fprintf(stderr, "stack:\n");
+	for (i = 0; i < stack_count; i++) {
+		dump_sym(stack[i]);
+	}
+
 	_exit(EXIT_FAILURE);
 }
 
