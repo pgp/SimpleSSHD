@@ -195,9 +195,7 @@ static void main_noinetd() {
 			}
 		}
 
-fprintf(stderr,"server select in\n");
 		val = select(maxsock+1, &fds, NULL, NULL, NULL);
-fprintf(stderr,"server select out (%d)\n", (int)val);
 
 		if (ses.exitflag) {
 			unlink(svr_opts.pidfile);
@@ -349,9 +347,7 @@ static void sigchld_handler(int UNUSED(unused)) {
 
 	const int saved_errno = errno;
 
-fprintf(stderr,"sigchld\n");
 	while(waitpid(-1, NULL, WNOHANG) > 0) {}
-fprintf(stderr,"sigchld return from waitpid\n");
 
 	sa_chld.sa_handler = sigchld_handler;
 	sa_chld.sa_flags = SA_NOCLDSTOP;
