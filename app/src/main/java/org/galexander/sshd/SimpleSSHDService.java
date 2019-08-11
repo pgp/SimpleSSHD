@@ -195,7 +195,7 @@ public class SimpleSSHDService extends Service {
 				synchronized (lock) {
 					stop_sshd();
 					sshd_pid = pid;
-					sshd_when = System.currentTimeMillis();
+					sshd_when = 0;
 					sshd_duration = 0;
 				}
 			}
