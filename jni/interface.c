@@ -116,6 +116,16 @@ from_java_string(jobject s)
 	return ret;
 }
 
+
+/* this makes sure that no previously-added atexit gets called (some users have
+ * an atexit registered by libGLESv2_adreno.so */
+static void
+null_atexit(void)
+{
+	_Exit(0);
+}
+
+
 JNIEXPORT jint JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jclass cl,
@@ -145,6 +155,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		int logfd;
 		int retval;
 		int i;
+
+		atexit(null_atexit);
 
 		logfn = conf_path_file("dropbear.err");
 		logfn_old = conf_path_file("dropbear.err.old");
