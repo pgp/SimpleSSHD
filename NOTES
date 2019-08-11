@@ -961,13 +961,6 @@ So I need to figure out how to bypass the atexit() somehow, perhaps by
 calling _exit() directly?
 
 
-XXX - why doesn't commit 73d4406ee1f02c3403d3c176e1104c8b35d44902 work the first time - it should always restart when it crashes, not just on subsequent restarts
-XXX - make the dump go deeper in the stack
-XXX - put a crash in an atexit() to be sure it presents about this way
-XXX - test re-start mechanism, which doesn't seem to work on the first try if it crashes
-XXX - test bypassing that crash (register an atexit() just after the fork that calls _Exit(0))
-XXX - remove the crash, remove the debug fprintfs (select in/out, sigchld)
-
 --- new release
 
 XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
