@@ -21,6 +21,7 @@ significant changes -- a new version of Dropbear 2019.78 and a new
 version of the Android SDK.  If you are having troubles with the upgrade,
 please email me!</b></p>
 
+
 <h2>Quick start</h2>
 
 <ul>
@@ -61,6 +62,7 @@ disappear if you uninstall SimpleSSHD.</p>
 
 <p>Once you get setup, you may want BusyBox.  Check out
 <a href="https://play.google.com/store/apps/details?id=org.galexander.busybox">SimpleBusyBox</a>.</p>
+
 
 <h2>Settings</h2>
 
@@ -145,6 +147,32 @@ login shell would be invoked as "<tt>-sh</tt>", but su will be invoked as
 "<tt>su -</tt>".</dd>
 
 
+<h2>Broadcast intents</h2>
+
+<p>SimpleSSHD registers receivers for broadcasts that you can use to
+start/stop the service programmatically, using an app like Tasker, or the
+commandline tool <tt>am</tt>.</p>
+
+<p>action: <tt>org.galexander.sshd.START</tt><br>
+&nbsp;&nbsp;or: <tt>org.galexander.sshd.STOP</tt><br>
+app: <tt>org.galexander.sshd</tt><br>
+category: <tt>android.intent.category.DEFAULT</tt> (optional).</p>
+
+<p>For example, to start sshd service under shell, you could run:
+<pre>am broadcast -a org.galexander.sshd.START org.galexander.sshd</pre></p>
+
+<p>You may need to specify <tt>--user 0</tt> depending on the context:
+<pre>am broadcast --user 0 -a org.galexander.sshd.START org.galexander.sshd</pre></p>
+
+<p>If you are getting an error from <tt>am</tt> like:
+<pre>cmd: Failure calling service activity: Failed transaction (2147483646)</pre>
+it can probably be solved by disassociating <tt>am</tt> from the ssh
+terminal (I don't know why).  This can be accomplished by redirecting
+stdin, stdout, and stderr.  For example, I can actually stop sshd from
+within an ssh session using this command:
+<pre>am broadcast --user 0 -a org.galexander.sshd.STOP org.galexander.sshd < /dev/null > /dev/null 2> /dev/null</pre></p>
+
+
 <h2>Frequently Asked Questions</h2>
 
 <p>Here are some common complaints:</p>
@@ -184,6 +212,7 @@ regular <tt>rsa</tt> key for greatest compatibility.
 <h2>Change Log</h2>
 
 <ul>
+<li> <b>2019/09/xx Version 22:</b> Add broadcast intents for start and stop.
 <li> <b>2019/08/11 Version 21:</b> Fix restarting after a crash.  Fix SIGSEGV on some Android 9 devices.
 <li> <b>2019/06/16 Version 20:</b> Update SDK.  Support x86_64, arm64.
 Fix finding support libraries.  Fix colors again.  Fix start-on-boot on
@@ -219,6 +248,7 @@ buffer size to 1MB.
 <li> <b>2014/12/29 Version 1.1:</b> Works with Lollipop now.
 <li> <b>2014/12/22 Version 1.0:</b> Initial public release.
 </ul>
+
 
 <h2>About</h2>
 
