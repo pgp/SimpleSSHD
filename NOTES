@@ -970,8 +970,6 @@ And a few people have written back to say the atexit bypass worked for
 their SIGSEGV - pfew!
 
 
-XXX - add org.galexander.sshd.START / STOP broadcast targets to start and stop the service (try with Tasker)
-
 
 --- new release
 
