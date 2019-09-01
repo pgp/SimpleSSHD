@@ -25,5 +25,17 @@
 		<action android:name="android.intent.action.BOOT_COMPLETED" />
 	    </intent-filter>
 	</receiver>
+	<receiver android:name="StartReceiver">
+	    <intent-filter>
+		<action android:name="org.galexander.sshd.START" />
+		<category android:name="android.intent.category.DEFAULT" />
+	    </intent-filter>
+	</receiver>
+	<receiver android:name="StopReceiver">
+	    <intent-filter>
+		<action android:name="org.galexander.sshd.STOP" />
+		<category android:name="android.intent.category.DEFAULT" />
+	    </intent-filter>
+	</receiver>
     </application>
 </manifest>
