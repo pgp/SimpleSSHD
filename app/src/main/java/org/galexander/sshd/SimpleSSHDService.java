@@ -10,6 +10,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import java.io.BufferedReader;
 import java.io.File;
@@ -209,5 +210,21 @@ public class SimpleSSHDService extends Service {
 	private static native int waitpid(int pid);
 	static {
 		System.loadLibrary("simplesshd-jni");
+	}
+
+	public static void my_startService(Context ctx, Intent i) {
+		Prefs.init(ctx);
+		if (Build.VERSION.SDK_INT >=
+				Build.VERSION_CODES.O) {
+			if (Prefs.get_foreground()) {
+				ctx.startForegroundService(i);
+			} else {
+				Toast.makeText(ctx,
+"SimpleSSHD cannot start in background since Oreo (enable Settings -> Foreground Service).",
+					Toast.LENGTH_LONG).show();
+			}
+		} else {
+			ctx.startService(i);
+		}
 	}
 }
