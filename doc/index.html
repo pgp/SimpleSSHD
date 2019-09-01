@@ -158,6 +158,9 @@ commandline tool <tt>am</tt>.</p>
 app: <tt>org.galexander.sshd</tt><br>
 category: <tt>android.intent.category.DEFAULT</tt> (optional).</p>
 
+<p>Note that these intents will only work on phones with Android 8 (Oreo)
+or later if <b>Settings</b> -> <b>Foreground Service</b> is enabled.</p>
+
 <p>For example, to start sshd service under shell, you could run:
 <pre>am broadcast -a org.galexander.sshd.START org.galexander.sshd</pre></p>
 
