@@ -971,6 +971,9 @@ their SIGSEGV - pfew!
 
 
 
+XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves
+XXX - test Settings colors in Pie (or Quiche?) "dark mode" for Alexander Chobot
+
 --- new release
 
 XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
