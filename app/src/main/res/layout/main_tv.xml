@@ -35,12 +35,12 @@
 	    android:singleLine="false"
 	    android:background="#ff000000"
 	    android:textColor="#ffffffff" />
-	<Button android:id="@+id/startstop"
+	<Button style="@style/tv_button" android:id="@+id/startstop"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
+	    android:layout_weight="0"
 	    android:layout_gravity="center"
 	    android:text="Start"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
 	    android:onClick="startstop_clicked" />
     </LinearLayout>
     <LinearLayout
@@ -48,19 +48,19 @@
 	android:layout_width="1dp"
 	android:layout_weight="1"
 	android:layout_height="fill_parent">
-	<Button style="@style/option_button" android:id="@+id/option1"
+	<Button style="@style/tv_button" android:id="@+id/option1"
 	    android:text="Settings"
 	    android:onClick="settings_clicked" />
-	<Button style="@style/option_button" android:id="@+id/option2"
+	<Button style="@style/tv_button" android:id="@+id/option2"
 	    android:text="Copy App-private Path"
 	    android:onClick="copypriv_clicked" />
-	<Button style="@style/option_button" android:id="@+id/option3"
+	<Button style="@style/tv_button" android:id="@+id/option3"
 	    android:text="Reset Keys"
 	    android:onClick="resetkeys_clicked" />
-	<Button style="@style/option_button" android:id="@+id/option4"
+	<Button style="@style/tv_button" android:id="@+id/option4"
 	    android:text="Documentation"
 	    android:onClick="doc_clicked" />
-	<Button style="@style/option_button" android:id="@+id/option5"
+	<Button style="@style/tv_button" android:id="@+id/option5"
 	    android:text="About"
 	    android:onClick="about_clicked" />
     </LinearLayout>
