@@ -40,6 +40,8 @@
 	    android:layout_height="wrap_content"
 	    android:layout_weight="0"
 	    android:layout_gravity="center"
+	    android:nextFocusDown="@+id/option1"
+	    android:nextFocusUp="@+id/option5"
 	    android:text="Start"
 	    android:onClick="startstop_clicked" />
     </LinearLayout>
@@ -49,6 +51,7 @@
 	android:layout_weight="1"
 	android:layout_height="fill_parent">
 	<Button style="@style/tv_button" android:id="@+id/option1"
+	    android:nextFocusUp="@+id/startstop"
 	    android:text="Settings"
 	    android:onClick="settings_clicked" />
 	<Button style="@style/tv_button" android:id="@+id/option2"
@@ -61,6 +64,7 @@
 	    android:text="Documentation"
 	    android:onClick="doc_clicked" />
 	<Button style="@style/tv_button" android:id="@+id/option5"
+	    android:nextFocusDown="@+id/startstop"
 	    android:text="About"
 	    android:onClick="about_clicked" />
     </LinearLayout>
