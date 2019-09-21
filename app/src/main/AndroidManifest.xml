@@ -11,7 +11,8 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <application android:label="SimpleSSHD" android:icon="@drawable/icon"
-	  android:allowBackup="false" android:banner="@drawable/tvbanner">
+	  android:allowBackup="false" android:banner="@drawable/tvbanner"
+	  android:usesCleartextTraffic="true">
         <activity android:name="SimpleSSHD" android:label="SimpleSSHD"
 	    android:launchMode="singleTask">
             <intent-filter>
@@ -28,6 +29,9 @@
             </intent-filter>
         </activity>
 	<activity android:name="Settings" android:label="Settings" />
+	<activity android:name="DocActivity" android:label="Documentation" />
+	<activity android:name="DocActivityTV" android:label="Documentation"
+	    android:theme="@style/Theme.Leanback" />
 	<service android:name="SimpleSSHDService"
 	    android:label="SimpleSSHDService" />
 	<receiver android:name="BootReceiver">

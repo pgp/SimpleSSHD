@@ -1011,11 +1011,6 @@ Luckily, even though the list of requirements is long, it is largely
 irrelevant or redundant, so I'm just about there.
 
 
-XXX - android TV support
- - doc should start a WebView instead of a URL
- - make the backgrounds of the buttons more vividly demonstrate focus
- - make nextFocusDown/Left/Right/Up overrides for some buttons
-
 
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)

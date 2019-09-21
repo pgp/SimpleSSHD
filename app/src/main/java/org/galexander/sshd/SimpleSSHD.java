@@ -114,19 +114,11 @@ public class SimpleSSHD extends Activity
 	public void doc_clicked(View v) {
 		try {
 			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
+			i.setData(Uri.parse(DocActivity.url));
 			startActivity(i);
 		} catch (Exception e) {
-			new AlertDialog.Builder(this)
-				.setCancelable(true)
-				.setPositiveButton("OK",
-	new DialogInterface.OnClickListener() {
-	public void onClick(DialogInterface di, int which) { }
-	})
-				.setIcon(android.R.drawable.ic_dialog_info)
-				.setTitle("no browser")
-				.setMessage("YOU: a note 7 owner with no browser installed on your android?\nME: an app developer who keeps getting crash reports and wants to hear your story. email nobrowserdroid@galexander.org")
-				.show();
+			startActivity(new Intent(this, (is_tv
+				? DocActivityTV.class : DocActivity.class)));
 		}
 	}
 	public void about_clicked(View v) {
