@@ -2,7 +2,8 @@ package org.galexander.sshd;
 
 public class SimpleSSHDTV extends SimpleSSHD
 {
-	public static boolean is_tv() {
-		return true;
+	public SimpleSSHDTV() {
+		super();
+		is_tv = true;
 	}
 }

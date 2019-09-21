@@ -36,6 +36,7 @@ public class SimpleSSHD extends Activity
 	public static SimpleSSHD curr = null;
 	public static String app_private = null;
 	private UpdaterThread updater = null;
+	public static boolean is_tv = false;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -316,9 +317,5 @@ public class SimpleSSHD extends Activity
 
 	public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
 		Prefs.set_requested();	/* whatever result, don't ask again */
-	}
-
-	public static boolean is_tv() {
-		return false;
 	}
 }
