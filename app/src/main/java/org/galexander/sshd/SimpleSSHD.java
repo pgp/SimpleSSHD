@@ -317,4 +317,8 @@ public class SimpleSSHD extends Activity
 	public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
 		Prefs.set_requested();	/* whatever result, don't ask again */
 	}
+
+	public static boolean is_tv() {
+		return false;
+	}
 }
