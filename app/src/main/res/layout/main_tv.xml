@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginTop="27dp"
+    android:layout_marginBottom="27dp"
+    android:layout_marginLeft="48dp"
+    android:layout_marginRight="48dp"
+    android:background="#ff000000">
+    <LinearLayout
+	android:orientation="vertical"
+	android:layout_width="1dp"
+	android:layout_weight="4"
+	android:layout_height="fill_parent">
+	<TextView android:id="@+id/ip"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:typeface="monospace"
+	    android:background="#ff112266"
+	    android:textColor="#ffffffff"
+	    android:text="IP: XXX" />
+	<EditText android:id="@+id/log"
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_weight="1"
+	    android:ellipsize="start"
+	    android:editable="false"
+	    android:textAppearance="?android:attr/textAppearanceSmall"
+	    android:typeface="monospace"
+	    android:gravity="top"
+	    android:singleLine="false"
+	    android:background="#ff000000"
+	    android:textColor="#ffffffff" />
+	<Button android:id="@+id/startstop"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:text="Start"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:onClick="startstop_clicked" />
+    </LinearLayout>
+    <LinearLayout
+	android:orientation="vertical"
+	android:layout_width="1dp"
+	android:layout_weight="1"
+	android:layout_height="fill_parent">
+	<Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_weight="1"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:text="Settings"
+	    android:onClick="settings_clicked" />
+	<Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_weight="1"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:text="Copy App-private Path"
+	    android:onClick="copypriv_clicked" />
+	<Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_weight="1"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:text="Reset Keys"
+	    android:onClick="resetkeys_clicked" />
+	<Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_weight="1"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:text="Documentation"
+	    android:onClick="doc_clicked" />
+	<Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_weight="1"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:text="About"
+	    android:onClick="about_clicked" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- NB: if you change this file, you should also change the right-hand
+button list in res/layout/main_tv.xml -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/settings"
           android:icon="@android:drawable/ic_menu_manage"

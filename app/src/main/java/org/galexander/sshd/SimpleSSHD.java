@@ -42,7 +42,7 @@ public class SimpleSSHD extends Activity
 		super.onCreate(savedInstanceState);
 		app_private = getFilesDir().toString();
 		Prefs.init(this);
-		setContentView(R.layout.main);
+		setContentView(is_tv ? R.layout.main_tv : R.layout.main);
 		log_view = (EditText)findViewById(R.id.log);
 		startstop_view = (Button)findViewById(R.id.startstop);
 		ip_view = (TextView)findViewById(R.id.ip);

@@ -1005,8 +1005,16 @@ there's no three-dots menu button, so no way to get to Settings.
 Anyways, there's a whole laundry list of things to do to get into the app
 store and to get shown in the regular launcher.
 
+...
+
+Luckily, even though the list of requirements is long, it is largely
+irrelevant or redundant, so I'm just about there.
+
 
 XXX - android TV support
+ - make buttons work
+ - doc should start a WebView instead of a URL??
+ - about shouldn't use Dialog??
 
 
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
