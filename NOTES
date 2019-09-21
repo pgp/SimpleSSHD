@@ -970,7 +970,47 @@ And a few people have written back to say the atexit bypass worked for
 their SIGSEGV - pfew!
 
 
+September 21, 2019.
 
+First, some user reports.
+
+Kumaran says the START/STOP broadcast intents work wwith Tasker on
+Android 7 but not on Android 9.  He also reports it works from the shell
+(am broadcast --user 0 -a org.galexander.sshd.START org.galexander.ssh)
+so I'm not sure what the difference is, and I'm not super inclined to
+install Tasker to find out.  I wonder if there is some sort of implicit
+distinction between sending a broadcast intent and sending a service
+intent that is negotiated differently at Android 9?
+
+Roman reports that it "works" on his Onyx Boox i68ML (eink, I think), but
+it doesn't refresh the log display so he can never see the
+one-time-password.  I think I just need to find a way to manually trigger
+a refresh of the eInk but I haven't found anything like that yet...just a
+bunch of people reporting that other apps (KOReader, CoolReader) stopped
+working on onyx boox at some point.  I do remember being somewhat
+surprised that the log view worked at all, so maybe there is something
+missing from my use of TextView and we just have been getting lucky...
+
+But while I was looking for a way to get the android emulator to emulate
+eink (no dice), I stumbled onto the Android TV emulation!  I haven't
+received one of these requests recently but they used to be a common
+occurrence, and I suspect people would really appreciate if SimpleSSHD
+was just available regularly through the app store on TV.
+
+With the emulator, I was able to sideload the app with adb, and then
+enable it under Settings -> Security & Permissions and then launch it
+with Settings -> Apps -> SimpleSSHD -> open.  Then it works, except
+there's no three-dots menu button, so no way to get to Settings.
+
+Anyways, there's a whole laundry list of things to do to get into the app
+store and to get shown in the regular launcher.
+
+
+XXX - android TV support
+
+
+XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
+XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
 XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves
 XXX - test Settings colors in Pie (or Quiche?) "dark mode" for Alexander Chobot
 
