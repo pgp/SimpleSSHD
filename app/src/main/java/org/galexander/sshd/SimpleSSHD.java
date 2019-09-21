@@ -80,61 +80,83 @@ public class SimpleSSHD extends Activity
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.settings:
-				startActivity(new Intent(this, Settings.class));
+				settings_clicked(null);
 				return true;
 			case R.id.copypriv:
-				copy_app_private();
+				copypriv_clicked(null);
 				return true;
 			case R.id.resetkeys:
-				reset_keys();
+				resetkeys_clicked(null);
 				return true;
-			case R.id.doc: {
-				try {
-					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
-					startActivity(i);
-				} catch (Exception e) {
-					new AlertDialog.Builder(this)
-						.setCancelable(true)
-						.setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface di, int which) { }
-                        })
-						.setIcon(android.R.drawable.ic_dialog_info)
-						.setTitle("no browser")
-						.setMessage("YOU: a note 7 owner with no browser installed on your android?\nME: an app developer who keeps getting crash reports and wants to hear your story. email nobrowserdroid@galexander.org")
-						.show();
-				}
-			}	return true;
-			case R.id.about: {
-				AlertDialog.Builder b = new AlertDialog.Builder(this);
-				b.setCancelable(true);
-				b.setPositiveButton("OK",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface di, int which) { }
-					});
-				b.setIcon(android.R.drawable.ic_dialog_info);
-				b.setTitle("About");
-				b.setMessage(
-"SimpleSSHD version " + my_version() +
-"\ndropbear 2019.78" +
-"\nscp/sftp from OpenSSH 6.7p1" +
-"\nrsync 3.1.1");
-				b.show();
-			}	return true;
+			case R.id.doc:
+				doc_clicked(null);
+				return true;
+			case R.id.about:
+				about_clicked(null);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
 
+
+	/* these can be called as the _clicked() variant on Android TV, or
+	 * through the options menu on regular Android */
+	public void settings_clicked(View v) {
+		startActivity(new Intent(this, Settings.class));
+	}
+	public void copypriv_clicked(View v) {
+		copy_app_private();
+	}
+	public void resetkeys_clicked(View v) {
+		reset_keys();
+	}
+	public void doc_clicked(View v) {
+		try {
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
+			startActivity(i);
+		} catch (Exception e) {
+			new AlertDialog.Builder(this)
+				.setCancelable(true)
+				.setPositiveButton("OK",
+	new DialogInterface.OnClickListener() {
+	public void onClick(DialogInterface di, int which) { }
+	})
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setTitle("no browser")
+				.setMessage("YOU: a note 7 owner with no browser installed on your android?\nME: an app developer who keeps getting crash reports and wants to hear your story. email nobrowserdroid@galexander.org")
+				.show();
+		}
+	}
+	public void about_clicked(View v) {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setCancelable(true);
+		b.setPositiveButton("OK",
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface di, int which) { }
+			});
+		b.setIcon(android.R.drawable.ic_dialog_info);
+		b.setTitle("About");
+		b.setMessage(
+"SimpleSSHD version " + my_version() +
+"\ndropbear 2019.78" +
+"\nscp/sftp from OpenSSH 6.7p1" +
+"\nrsync 3.1.1");
+		b.show();
+	}
+
+
 	private void update_startstop_prime() {
 		if (SimpleSSHDService.is_started()) {
 			startstop_view.setText(
 				Prefs.get_onopen() ? "QUIT" : "STOP");
-			startstop_view.setTextColor(0xFF881111);
+			startstop_view.setTextColor(
+				is_tv ? 0xFFFF6666 : 0xFF881111);
 		} else {
 			startstop_view.setText("START");
-			startstop_view.setTextColor(0xFF118811);
+			startstop_view.setTextColor(
+				is_tv ? 0xFF44FF44 : 0xFF118811);
 		}
 	}
 
