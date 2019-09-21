@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="option_button" parent="TextAppearance.Leanback">
+	<item name="android:textAllCaps">false</item>
+	<item name="android:textSize">20sp</item>
+	<item name="android:layout_width">fill_parent</item>
+	<item name="android:layout_height">1dp</item>
+	<item name="android:layout_weight">1</item>
+    </style>
+</resources>

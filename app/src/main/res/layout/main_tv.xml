@@ -48,39 +48,19 @@
 	android:layout_width="1dp"
 	android:layout_weight="1"
 	android:layout_height="fill_parent">
-	<Button
-	    android:layout_width="fill_parent"
-	    android:layout_height="1dp"
-	    android:layout_weight="1"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
+	<Button style="@style/option_button" android:id="@+id/option1"
 	    android:text="Settings"
 	    android:onClick="settings_clicked" />
-	<Button
-	    android:layout_width="fill_parent"
-	    android:layout_height="1dp"
-	    android:layout_weight="1"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
+	<Button style="@style/option_button" android:id="@+id/option2"
 	    android:text="Copy App-private Path"
 	    android:onClick="copypriv_clicked" />
-	<Button
-	    android:layout_width="fill_parent"
-	    android:layout_height="1dp"
-	    android:layout_weight="1"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
+	<Button style="@style/option_button" android:id="@+id/option3"
 	    android:text="Reset Keys"
 	    android:onClick="resetkeys_clicked" />
-	<Button
-	    android:layout_width="fill_parent"
-	    android:layout_height="1dp"
-	    android:layout_weight="1"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
+	<Button style="@style/option_button" android:id="@+id/option4"
 	    android:text="Documentation"
 	    android:onClick="doc_clicked" />
-	<Button
-	    android:layout_width="fill_parent"
-	    android:layout_height="1dp"
-	    android:layout_weight="1"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
+	<Button style="@style/option_button" android:id="@+id/option5"
 	    android:text="About"
 	    android:onClick="about_clicked" />
     </LinearLayout>
