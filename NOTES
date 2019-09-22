@@ -1010,6 +1010,19 @@ store and to get shown in the regular launcher.
 Luckily, even though the list of requirements is long, it is largely
 irrelevant or redundant, so I'm just about there.
 
+...
+
+On Android, they suggest you make a URL Intent and send it to the system
+browser.  But on Android TV, you make a WebView, I guess there is no
+stock Chrome.  It's easy enough.  The disconcerting part is I can't test
+it on my emulated phone or real phone because WebView.loadUrl() just
+defaults to sending to the system Chrome.  That's fine, though,
+apparently it's a known thing you can work around, but I really don't
+need to work around it, assuming Android properly defaults to WebView
+instead if Chrome isn't available.  *shrug*
+
+So I'm tagging the new version.
+
 
 
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
