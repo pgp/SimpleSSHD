@@ -1101,7 +1101,6 @@ an "action string."  !!!  Not sure if that's something I can play with,
 but putting it on the list.
 
 
-XXX - make do_startService() implement the hack to check if it's really foreground
 XXX - figure out how to make the google play store know it's android TV compatible
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
