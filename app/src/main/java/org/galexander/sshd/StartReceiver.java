@@ -6,7 +6,6 @@ import android.content.Context;
 
 public class StartReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
-                SimpleSSHDService.my_startService(context,
-			new Intent(context, SimpleSSHDService.class));
+                SimpleSSHDService.do_startService(context, /*stop=*/false);
 	}
 }

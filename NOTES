@@ -1067,7 +1067,42 @@ and I'm not gonna be doing new updates to version 19 anyways, so,
 whatever.
 
 
-XXX - see if crash in startService continues with version 23
+September 22, 2019.
+
+The crash on startService() in onResume() has already been verified to
+occur also at version 23, so I have to track that down.  I found this,
+which is likely to be the underlying problem:
+
+   https://stackoverflow.com/questions/52013545/android-9-0-not-allowed-to-start-service-app-is-in-background-after-onresume
+
+It looks like the user opens the app with start-on-open, it works, and
+then they let the phone fall asleep with SimpleSSHD on top, and some sort
+of shuffle kills the service, and then they wake the phone up, and then
+it tries to resume SimpleSSHD, which tries to re-start the service, which
+fails because the phone hasn't finished waking up yet so even the top
+activity isn't active yet, even though it's already in
+SimpleSSHD.onResume().  Apparently acknowledged as a bug in Android 9.
+
+I tried to synthesize this sequence on the emulator with x86 pie, and I
+had no luck.  I was able to get the service to die (by broadcasting STOP)
+while the emulator was "asleep", but then it woke up it didn't cause any
+trouble.  I suspect it takes a few coincidences to reliably trigger.
+
+Anyways, so what I'm doing is I'm having the startService() calls in
+SimpleSSHD go through the SimpleSSHDService.do_startService() wrapper, so
+that they become startForegroundService() calls as appropriate.  This may
+solve the problem on its own, if the user happens to have selected
+foreground.  But then I can also make this common path smarter...
+
+On another note, I stumbled onto something that says Android 9 limits
+implicit broadcasts (no explicit destination), and considers a broadcast
+to be implicit even if it does have an explicit destination if there is
+an "action string."  !!!  Not sure if that's something I can play with,
+but putting it on the list.
+
+
+XXX - make do_startService() implement the hack to check if it's really foreground
+XXX - figure out how to make the google play store know it's android TV compatible
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
 XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves

@@ -8,8 +8,8 @@ public class BootReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Prefs.init(context);
 		if (Prefs.get_onboot()) {
-			SimpleSSHDService.my_startService(context,
-				new Intent(context, SimpleSSHDService.class));
+			SimpleSSHDService.do_startService(context,
+						/*stop=*/false);
 		}
 	}
 }

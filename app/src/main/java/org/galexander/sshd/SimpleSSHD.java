@@ -60,7 +60,7 @@ public class SimpleSSHD extends Activity
 		ip_view.setText(get_ip(true));
 
 		if (Prefs.get_onopen() && !SimpleSSHDService.is_started()) {
-			startService(new Intent(this, SimpleSSHDService.class));
+			SimpleSSHDService.do_startService(this, /*stop=*/false);
 		}
 	}
 
@@ -172,11 +172,7 @@ public class SimpleSSHD extends Activity
 
 	public void startstop_clicked(View v) {
 		boolean already_started = SimpleSSHDService.is_started();
-		Intent i = new Intent(this, SimpleSSHDService.class);
-		if (already_started) {
-			i.putExtra("stop", true);
-		}
-		startService(i);
+		SimpleSSHDService.do_startService(this, already_started);
 		if (already_started && Prefs.get_onopen()) {
 			finish();
 		}

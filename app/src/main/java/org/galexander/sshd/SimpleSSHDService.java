@@ -1,5 +1,6 @@
 package org.galexander.sshd;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -212,12 +213,17 @@ public class SimpleSSHDService extends Service {
 		System.loadLibrary("simplesshd-jni");
 	}
 
-	public static void my_startService(Context ctx, Intent i) {
+	public static void do_startService(Context ctx, boolean stop) {
+		Intent i = new Intent(ctx, SimpleSSHDService.class);
+		if (stop) {
+			i.putExtra("stop", true);
+		}
 		Prefs.init(ctx);
-		if (Build.VERSION.SDK_INT >=
-				Build.VERSION_CODES.O) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			if (Prefs.get_foreground()) {
 				ctx.startForegroundService(i);
+			} else if (ctx instanceof Activity) {
+				ctx.startService(i);
 			} else {
 				Toast.makeText(ctx,
 "SimpleSSHD cannot start in background since Oreo (enable Settings -> Foreground Service).",
