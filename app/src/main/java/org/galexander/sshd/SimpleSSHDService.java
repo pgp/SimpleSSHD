@@ -1,6 +1,7 @@
 package org.galexander.sshd;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
 
 public class SimpleSSHDService extends Service {
 		/* if restarting twice within 10 seconds, give up */
@@ -222,15 +224,38 @@ public class SimpleSSHDService extends Service {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			if (Prefs.get_foreground()) {
 				ctx.startForegroundService(i);
-			} else if (ctx instanceof Activity) {
-				ctx.startService(i);
-			} else {
+			} else if (!(ctx instanceof Activity)) {
 				Toast.makeText(ctx,
 "SimpleSSHD cannot start in background since Oreo (enable Settings -> Foreground Service).",
 					Toast.LENGTH_LONG).show();
+			} else if (is_foreground_app(ctx)) {
+				ctx.startService(i);
+			} else {
+				/* The OS put us in SimpleSSHD.onResume() even
+				 * though it's not ready to put an app activity
+				 * in the foreground yet!  Just give up.  Maybe
+				 * the OS will try again? */
 			}
 		} else {
 			ctx.startService(i);
 		}
+	}
+
+	/* There's a bug in Android 9 Pie (SDK 28) where onResume() is called
+	 * during wake-up when the OS isn't ready to put the app in the
+	 * foreground, so startService() fails.  This should detect that state.
+	 * This code is copy-pasted from stackoverflow, and initially comes from
+	 * a Google bug report on the issue? */
+	public static boolean is_foreground_app(Context ctx) {
+		ActivityManager am = (ActivityManager)ctx.getSystemService(
+				Context.ACTIVITY_SERVICE);
+		List<ActivityManager.RunningAppProcessInfo> procs =
+				am.getRunningAppProcesses();
+		if (procs == null) {
+			return false;
+		}
+		// higher importance has lower number (?)
+		return (procs.get(0).importance <=
+		   ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND);
 	}
 }
