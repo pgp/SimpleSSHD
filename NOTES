@@ -1023,8 +1023,51 @@ instead if Chrome isn't available.  *shrug*
 
 So I'm tagging the new version.
 
+...
+
+When I went to upload version 23, I found that there was a crash reported
+on version 22 with Android 9, two users, a Galaxy S9+ and a OnePlus5T.
+The crash looks like:
+
+   java.lang.RuntimeException:
+     at android.app.ActivityThread.performResumeActivity (ActivityThread.java:3992)
+     at android.app.ActivityThread.handleResumeActivity (ActivityThread.java:4024)
+     at android.app.servertransaction.ResumeActivityItem.execute (ResumeActivityItem.java:51)
+     at android.app.servertransaction.TransactionExecutor.executeLifecycleState (TransactionExecutor.java:145)
+     at android.app.servertransaction.TransactionExecutor.execute (TransactionExecutor.java:70)
+     at android.app.ActivityThread$H.handleMessage (ActivityThread.java:1926)
+     at android.os.Handler.dispatchMessage (Handler.java:106)
+     at android.os.Looper.loop (Looper.java:214)
+     at android.app.ActivityThread.main (ActivityThread.java:6990)
+     at java.lang.reflect.Method.invoke (Native Method)
+     at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run (RuntimeInit.java:493)
+     at com.android.internal.os.ZygoteInit.main (ZygoteInit.java:1445)
+   Caused by: java.lang.IllegalStateException:
+     at android.app.ContextImpl.startServiceCommon (ContextImpl.java:1666)
+     at android.app.ContextImpl.startService (ContextImpl.java:1611)
+     at android.content.ContextWrapper.startService (ContextWrapper.java:677)
+     at org.galexander.sshd.SimpleSSHD.onResume (SimpleSSHD.java:62)
+     at android.app.Instrumentation.callActivityOnResume (Instrumentation.java:1412)
+     at android.app.Activity.performResume (Activity.java:7611)
+     at android.app.ActivityThread.performResumeActivity (ActivityThread.java:3984)
+
+It's the startService() call for Start On Open.  So I tested that on my
+phone (Android 8), and on the emulator with Android 9 and 10, and I
+couldn't get it to happen.  Either it's upset that it isn't
+startForegroundService(), or maybe it somehow starts the service even
+after it's already been started and complains about that?  It seems like
+it must be intermittent or harmless, because one user has triggered it 6
+times on different days over the week.
+
+There's also a crash with version 19 on Android 9, and it only shows as
+far as:
+   android.app.ActivityThread.performLaunchActivity
+Which seems to me to maybe be the same spot?  Anyways, it didn't recur,
+and I'm not gonna be doing new updates to version 19 anyways, so,
+whatever.
 
 
+XXX - see if crash in startService continues with version 23
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
 XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves
