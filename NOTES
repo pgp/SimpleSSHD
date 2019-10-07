@@ -1101,6 +1101,17 @@ an "action string."  !!!  Not sure if that's something I can play with,
 but putting it on the list.
 
 
+October 7, 2019.
+
+Tom Davidson was having some problems with port proxy.  I guess he just
+wants client-side -L and -D to work, which they do work, so far as I
+know.  But I tested, and -R does not work!  My phone seems to have some
+sort of firewall, it hangs instead of saying connection denied.  So maybe
+-R isn't bypassing the firewall.  Another possibility is that dropbear
+simply doesn't support -R, but I kind of thought it did?
+
+
+XXX - why doesn't "ssh -R 2223:192.168.1.254:80 mouse" work?
 XXX - figure out how to make the google play store know it's android TV compatible
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
