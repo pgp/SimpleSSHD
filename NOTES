@@ -1111,6 +1111,7 @@ sort of firewall, it hangs instead of saying connection denied.  So maybe
 simply doesn't support -R, but I kind of thought it did?
 
 
+XXX - restart the daemon on app upgrade
 XXX - why doesn't "ssh -R 2223:192.168.1.254:80 mouse" work?
 XXX - figure out how to make the google play store know it's android TV compatible
 XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
