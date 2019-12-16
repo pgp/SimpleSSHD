@@ -35,8 +35,11 @@ Port 2222
 </pre>
 <li> Launch SimpleSSHD, and in Settings enable "Start on Boot", then
 manually start it for the first time.
-<li> Create <tt>authorized_keys</tt> in the home directory (do not use <tt>ssh-copy-id</tt>)
-<li> Optionally make <tt>.profile</tt>
+<li> Create <tt>authorized_keys</tt> in the home directory
+(do not use <tt>ssh-copy-id</tt>).
+<li> Optionally run <tt>restorecon -F authorized_keys</tt> (LineageOS
+needs it for "SELinux context").
+<li> Optionally make <tt>.profile</tt>.
 </ul>
 
 <p>If SimpleSSHD does not find an <tt>authorized_keys</tt> file when a
@@ -186,6 +189,12 @@ vary.  Modern Android (since about Kit Kat) only allows write access to
 an SD card through the Android Java API, but shell commands usually use
 Unix APIs (POSIX, C).  I don't know a work-around.  Most phones let you
 write to <tt>/sdcard</tt>, but it's often in the phone's internal memory.
+
+<li>If you installed an <tt>authorized_keys</tt> file, but SimpleSSHD
+acts like it doesn't exist, try running "<tt>restorecon -F
+authorized_keys</tt>".  Some Android configurations, such as LineageOS,
+run apps in an "SELinux Context" (don't ask me) where that kind of thing
+is necessary.
 
 <li> <tt>rsync</tt> will do too much work for an update, because there is
 usually no way to update the ctime, mtime, or atime on files in

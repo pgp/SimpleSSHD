@@ -1111,7 +1111,7 @@ sort of firewall, it hangs instead of saying connection denied.  So maybe
 simply doesn't support -R, but I kind of thought it did?
 
 
-XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user...and add "restorecon -F authorized_keys" to the FAQ if it works..  SELinux will apparently hide authorized_keys from the app, on LineageOS?
+XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
 
 XXX - restart the daemon on app upgrade
 XXX - why doesn't "ssh -R 2223:192.168.1.254:80 mouse" work?
