@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    :=
+LOCAL_CFLAGS    := -O
 LOCAL_MODULE    := simplesshd-jni
 
 DROPBEAR_PATH := ../dropbear
@@ -485,7 +485,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    := -Wall
+LOCAL_CFLAGS    := -Wall -O
 LOCAL_MODULE    := scp
 
 DROPBEAR_PATH := ../dropbear
@@ -503,7 +503,7 @@ include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    := -Wall
+LOCAL_CFLAGS    := -Wall -O
 LOCAL_MODULE    := sftp-server
 
 OPENSSH_PATH := ../openssh
@@ -533,7 +533,7 @@ include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    := -Wall
+LOCAL_CFLAGS    := -Wall -O
 LOCAL_MODULE    := rsync
 
 RSYNC_PATH := ../rsync
@@ -611,7 +611,7 @@ include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    := -Wall
+LOCAL_CFLAGS    := -Wall -O
 LOCAL_MODULE    := buffersu
 
 LOCAL_SRC_FILES := buffersu.c
