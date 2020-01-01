@@ -34,6 +34,9 @@
 
 #define LOCALOPTIONS_H_EXISTS 1
 
+/* this makes dropbear much faster at receiving files */
+#define DEFAULT_RECV_WINDOW 524288
+#define RECV_MAX_PAYLOAD_LEN (524288+16384)
 
 /* in jni/interface.c: */
 extern const char *conf_path;
