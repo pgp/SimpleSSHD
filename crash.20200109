@@ -1,0 +1,12 @@
+Yesterday, 7:03 PM on app version 24
+OnePlus OnePlus 7T (OnePlus7T), Android 10
+Report 1 of 3
+
+android.app.RemoteServiceException: 
+  at android.app.ActivityThread$H.handleMessage (ActivityThread.java:2038)
+  at android.os.Handler.dispatchMessage (Handler.java:107)
+  at android.os.Looper.loop (Looper.java:214)
+  at android.app.ActivityThread.main (ActivityThread.java:7682)
+  at java.lang.reflect.Method.invoke (Native Method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run (RuntimeInit.java:516)
+  at com.android.internal.os.ZygoteInit.main (ZygoteInit.java:950)
