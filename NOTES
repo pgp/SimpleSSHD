@@ -1111,16 +1111,28 @@ sort of firewall, it hangs instead of saying connection denied.  So maybe
 simply doesn't support -R, but I kind of thought it did?
 
 
+January 10, 2019.
+
+I was here to add Fionn Behrens' request for dark mode support,
+especially for the Notification.  And I found, it's already on the list.
+There's a lot on the list.
+
+
+
+XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens
 XXX - crash.20200109
 XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
-
 XXX - restart the daemon on app upgrade
+       <receiver android:name="com.google.android.apps.youtube.app.PackageReplacedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
 XXX - why doesn't "ssh -R 2223:192.168.1.254:80 mouse" work?
-XXX - figure out how to make the google play store know it's android TV compatible
-XXX - figure out how to force a refresh on eink devices (onyx boox) when the password is displayed (Roman)
+
+XXX - figure out how to force a screen refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
 XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves
-XXX - test Settings colors in Pie (or Quiche?) "dark mode" for Alexander Chobot
 
 --- new release
 
