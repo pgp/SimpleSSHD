@@ -1,0 +1,9 @@
+Jan 22, 9:01 AM on app version 24
+Xiaomi MiBox S (oneday), Android 8.1
+Report 1 of 1
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+pid: 0, tid: 0 >>> org.galexander.sshd <<<
+
+backtrace:
+  #00  pc 000000000001a6ac  /system/lib/libc.so (abort+63)
+  #01  pc 0000000000020c79  /system/lib/libc.so (sigprocmask+48)
