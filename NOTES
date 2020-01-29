@@ -1111,11 +1111,24 @@ sort of firewall, it hangs instead of saying connection denied.  So maybe
 simply doesn't support -R, but I kind of thought it did?
 
 
-January 10, 2019.
+January 10, 2020.
 
 I was here to add Fionn Behrens' request for dark mode support,
 especially for the Notification.  And I found, it's already on the list.
 There's a lot on the list.
+
+
+January 29, 2020.
+
+There's a cluster of reviews indicating problems with WinSCP:
+
+   Wojtek El Jan 9, 2020 at 8:52 AM
+   1 star
+   Worked great until latest update. Keeps loosing contection when
+   uploading file using sftp in WinSCP. Please do something about it then
+   I`ll change my rate. Android 5.1
+
+Soundds like the new receive window size breaks WinSCP??
 
 
 
