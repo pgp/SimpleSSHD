@@ -1128,10 +1128,153 @@ There's a cluster of reviews indicating problems with WinSCP:
    uploading file using sftp in WinSCP. Please do something about it then
    I`ll change my rate. Android 5.1
 
-Soundds like the new receive window size breaks WinSCP??
+Sounds like the new receive window size breaks WinSCP??
 
 
+March 20, 2020.
 
+I happened to install wine today, so I decided to try WinSCP.  The newest
+version of WinSCP (5.17.2) doesn't work, it gets an "Invalid access to
+memory" error when connecting.  Don't know why, maybe it's wine or maybe
+it's WinSCP.  Version 5.16.7 (slightly older) gets the same error.
+Version 4.0.4 is way too old, and can't connect (doesn't know any modern
+ciphers).  Version 5.9.3 is just right, I guess.  It "works".  But then,
+using SFTP to upload a file around 1MB, it reproduces the reported error.
+WinSCP reports "Server sent command status 11".  It has a log facility,
+but it shows precious little information.  It seems to send about 512kB
+and then it says:
+
+. 2020-03-20 20:35:08.191 There are 197377 bytes remaining in the send buffer, need to send at least another 164609 bytes
+. 2020-03-20 20:35:08.191 Looking for network events
+. 2020-03-20 20:35:08.191 Detected network event
+. 2020-03-20 20:35:08.191 Enumerating network events for socket 536
+. 2020-03-20 20:35:08.191 Enumerated 1 network events making 1 cumulative events for socket 536
+. 2020-03-20 20:35:08.191 Handling network read event on socket 536 with error 0
+. 2020-03-20 20:35:08.191 Server sent command exit status 11
+. 2020-03-20 20:35:08.192 Selecting events 0 for socket 536
+. 2020-03-20 20:35:08.192 Disconnected: All channels closed
+. 2020-03-20 20:35:08.192 Connection was lost, asking what to do.
+. 2020-03-20 20:35:08.192 Asking user:
+. 2020-03-20 20:35:08.192 Connection has been unexpectedly closed. Server sent command exit status 11. ()
+
+Not sure there's any information there.  The SimpleSSHD log shows just a
+normal "Exited normally".  Does that mean sftp did an "exit(11)" ?  Was
+there a SIGSEGV?  Did WinSCP just eat itself for no reason?  I have not
+been very impressed with WinSCP (and there is already a user report that
+switching to FileZilla is the right remedy all around), but I would like
+to investigate before throwing in the towel.
+
+The file is created on the target with length 65536.
+
+Anyways, first thing to do is dick around with the setting that probably
+caused the problem.  This is the change:
+
+   #define DEFAULT_RECV_WINDOW 524288
+   #define RECV_MAX_PAYLOAD_LEN (524288+16384)
+
+The previous values were apparently
+
+   #define DEFAULT_RECV_WINDOW 24576
+   #define RECV_MAX_PAYLOAD_LEN 32768
+
+Combinations DEFAULT_RECV_WINDOW / RECV_MAX_PAYLOAD_LEN.
+512 kB / 512+128 kB    broken
+24 kB / 512+128 kB     broken
+24 kB / 32 kB          fixed
+512 kB / 32 kB         fixed
+512-32 kB / 512 kB     broken
+512-32 kB / 32 kB      fixed
+512-32 kB / 64 kB      fixed
+512-32 kB / 128 kB     fixed
+512-32 kB / 256 kB     fixed
+512-32 kB / 384 kB     broken
+
+It seems that WinSCP doesn't like RECV_MAX_PAYLOAD_LEN larger than 256kB.
+
+Domagoj, who first pointed this out to me, sent this link:
+
+   https://lab.nexedi.com/nexedi/slapos/commit/605e564b8f3008cdb48dbc6e82c956029469ff02
+
+There they say that the -W option allows a major improvement in speed,
+but in order to be compatible with OpenSSH the RECV_MAX_PAYLOAD_LEN must
+also be increased.  I only made RECV_MAX_PAYLOAD_LEN "somewhat" bigger
+than DEFAULT_RECV_WINDOW because that was how it was before...
+
+So I guess I need to stop poking around in the dark, and find out these
+things really do.
+
+DEFAULT_RECV_WINDOW becomes opts.recv_window, which newchannel() uses to
+pick the size of writebuf, and to set chan->recvwindow.
+
+RECV_MAX_PAYLOAD_LEN-9 becomes RECV_MAX_CHANNEL_DATA_LEN, then goes into
+chan->recvmaxpacket.
+
+Both values are sent across by send_msg_channel_open_init()
+(SSH_MSG_CHANNEL_OPEN), and also by send_msg_channel_open_confirmation()
+(SSH_MSG_CHANNEL_OPEN_CONFIRMATION).
+
+It looks like chan->recvwindow is decremented as things come into the
+buffer, and incremented as they leave it.  recvmaxpacket doesn't seem to
+do anything other than get sent across.
+
+RFC4254 SSH Connection Protocol defines these SSH_MSG_CHANNEL_OPEN
+packets.  DEFAULT_RECV_WINDOW is called 'initial window size' and
+"specifies how many bytes of channel data can be sent without adjusting
+the window".  RECV_MAX_PAYLOAD_LEN is called 'maximum packet size' and
+"specifies the maximum size of an individual data packet that can be sent
+to the sender."
+
+So, really, I think that there is no reason for RECV_MAX_PAYLOAD_LEN to
+be bigger than DEFAULT_RECV_WINDOW.  I think DEFAULT_RECV_WINDOW was just
+unreasonably small in the Dropbear defaults, and RECV_MAX_PAYLOAD_LEN
+happened to be the smallest that was permitted by compatibility.
+
+A bigger DEFAULT_RECV_WINDOW would allow greater saturation of the pipe
+without worrying about the latency of ACKs.  A bigger
+RECV_MAX_PAYLOAD_LEN just saves the overhead of having more packet
+headers, I think.  So I think in principle, DEFAULT_RECV_WINDOW will have
+the bigger effect on effective bandwidth, so long as RECV_MAX_PAYLOAD_LEN
+is at least "decently large."
+
+So now I'm trying combinations to see performance and compatibility
+OpenSSH (sending a 16.4MB file across ssh 'cat > /dev/null', wall time):
+
+  512-32 kB / 384 kB     works 3.1s 3.4s 3.1s
+  512 kB / 32 kB         works 2.4s 2.1s 2.0s
+  1024 kB / 32 kB        works 2.2s 2.0s 2.2s
+  24 kB / 32 kB          works 10.4s 10.3s 8.9s
+  512 kB / 256 kB        works 2.3s 2.3s 2.1s
+  512 kB / 128 kB        works 2.9s 2.1s 2.1s
+  512 kB / 512 kB        works 2.4s 2.1s 2.2s
+  256 kB / 256 kB        works 3.4s 4.5s 2.4s 4.7s 2.0s 2.1s
+  128 kB / 128 kB        works 2.5s 2.3s 2.3s
+  64 kB / 64 kB          works 3.8s 3.1s 3.2s
+  32 kB / 256 kB         works 8.9s 9.1s 8.0s
+  64 kB / 256 kB         works 3.9s 5.6s 3.1s
+  512 kB / 128 kB(again) works 2.3s 1.9s 2.0s
+
+Obviously a lot of variation from noise on the wireless network, though I
+think the larger receive window actually helps erase some of that
+variability because it doesn't have to wait for the ACK whether the ACK
+is delayed by congestion or not.
+
+So, rather frustratingly, I've (somewhat) reproduced the performance
+motivation for changing DEFAULT_RECV_WINDOW, but I haven't found the
+compatibility motivation for changing RECV_MAX_PAYLOAD_LEN.  So I'm still
+stabbing in the dark.  I suspect that the compatibility problem was
+actually a since-fixed bug in OpenSSH, since ideally it should honor the
+packet length limit regardless of the window size?  Or!  The report is
+actually that a packet of length 32777 was sent...  That's 32768+9, maybe
+the -9 in the definition of RECV_MAX_CHANNEL_DATA_LEN is relatively
+modern in Dropbear??  I bet that's it!  It was a phantom all along that
+was forcing RECV_MAX_PAYLOAD_LEN to grow.
+
+Anyways, it looks like DEFAULT_RECV_WINDOW really just needs to be bigger
+than 128kB, and RECV_MAX_PAYLOAD_LEN hardly matters at all.  So I'm going
+with 512kB / 128kB.  And I confirm, that does work with WinSCP.
+
+
+XXX - on android 6 (duckling moto g2), the notification is white-on-white?
 XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens
 XXX - crash.20200109
 XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
