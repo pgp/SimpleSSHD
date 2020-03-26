@@ -1274,6 +1274,7 @@ than 128kB, and RECV_MAX_PAYLOAD_LEN hardly matters at all.  So I'm going
 with 512kB / 128kB.  And I confirm, that does work with WinSCP.
 
 
+XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
 XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens
 XXX - crash.20200109
