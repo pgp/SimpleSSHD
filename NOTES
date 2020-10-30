@@ -1274,6 +1274,8 @@ than 128kB, and RECV_MAX_PAYLOAD_LEN hardly matters at all.  So I'm going
 with 512kB / 128kB.  And I confirm, that does work with WinSCP.
 
 
+XXX - ed25519? new dropbear 2020.79!
+
 XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" />
 XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
@@ -1295,8 +1297,6 @@ XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reave
 --- new release
 
 XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
-
-XXX - ed25519?
 
 XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
 
