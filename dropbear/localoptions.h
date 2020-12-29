@@ -299,3 +299,5 @@ be overridden at runtime with -I. 0 disables idle timeouts */
 #define DEFAULT_PATH "/sbin:/system/sbin:/system/bin:/system/xbin"
 
 #define DROPBEAR_SVR_MULTIUSER 0
+
+#define BUNDLED_LIBTOM 1
