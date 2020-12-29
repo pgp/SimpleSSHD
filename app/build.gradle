@@ -4,8 +4,8 @@ def keyprops=new Properties()
 keyprops.load(new FileInputStream(rootProject.file("keystore.properties")))
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     sourceSets {
 	main {
@@ -25,7 +25,7 @@ android {
     defaultConfig {
         applicationId "org.galexander.sshd"
         minSdkVersion 17
-        targetSdkVersion 28
+        targetSdkVersion 30
     }
 
     buildTypes {
