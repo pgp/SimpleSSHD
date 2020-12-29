@@ -9,15 +9,9 @@
 #endif
 
 /* Default hostkey paths - these can be specified on the command line */
-#ifndef DSS_PRIV_FILENAME
 #define DSS_PRIV_FILENAME conf_path_file("dropbear_dss_host_key")
-#endif
-#ifndef RSA_PRIV_FILENAME
 #define RSA_PRIV_FILENAME conf_path_file("dropbear_rsa_host_key")
-#endif
-#ifndef ECDSA_PRIV_FILENAME
 #define ECDSA_PRIV_FILENAME conf_path_file("dropbear_ecdsa_host_key")
-#endif
 
 /* Set NON_INETD_MODE if you require daemon functionality (ie Dropbear listens
  * on chosen ports and keeps accepting connections. This is the default.
