@@ -101,8 +101,7 @@ void svr_auth_password(int valid_user) {
 
 	if (testcrypt == NULL) {
 		/* crypt() with an invalid salt like "!!" */
-		dropbear_log(LOG_WARNING, "No password received from ssh client",
-				ses.authstate.pw_name);
+		dropbear_log(LOG_WARNING, "No password received from ssh client");
 		send_msg_userauth_failure(0, 1);
 		return;
 	}
