@@ -22,12 +22,6 @@ password/interactive auth except for bootstrapping).  It does not use
 root, which means it must listen on a port over 1024 (defaults to port
 2222).</p>
 
-<p><b>SimpleSSHD version 20 was released 2019/06/16 and features
-significant changes -- a new version of Dropbear 2019.78 and a new
-version of the Android SDK.  If you are having troubles with the upgrade,
-please email me!</b></p>
-
-
 <h2>Quick start</h2>
 
 <ul>
@@ -227,6 +221,7 @@ harmless.
 <h2>Change Log</h2>
 
 <ul>
+<li> <b>2020/12/29 Version 26:</b> Fix ed25519 host key creation.
 <li> <b>2020/12/29 Version 25:</b> Fix compatibility with WinSCP.  Update to upstream Dropbear 2020.81 -- adding ed25519 support!
 <li> <b>2020/01/01 Version 24:</b> Fix crash with "Start on Open" on Android 9. New TV icon.  Improve performance.
 <li> <b>2019/09/21 Version 23:</b> Support Android TV.
