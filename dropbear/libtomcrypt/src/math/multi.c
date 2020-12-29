@@ -68,7 +68,6 @@ void ltc_cleanup_multi(void **a, ...)
       cur = va_arg(args, void**);
    }
    va_end(args);
-   return;
 }
 
 #endif

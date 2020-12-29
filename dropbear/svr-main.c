@@ -82,8 +82,10 @@ int main(int argc, char ** argv)
 static void main_inetd() {
 	char *host, *port = NULL;
 
-	/* Set up handlers, syslog, seed random */
+	/* Set up handlers, syslog */
 	commonsetup();
+
+	seedrandom();
 
 #if DEBUG_TRACE
 	if (debug_trace) {
@@ -275,7 +277,7 @@ static void main_noinetd() {
 				goto out;
 			}
 
-#ifdef DEBUG_NOFORK
+#if DEBUG_NOFORK
 			fork_ret = 0;
 #else
 			fork_ret = fork();
@@ -298,11 +300,6 @@ static void main_noinetd() {
 			} else {
 
 				/* child */
-#ifdef DEBUG_FORKGPROF
-				extern void _start(void), etext(void);
-				monstartup((u_long)&_start, (u_long)&etext);
-#endif /* DEBUG_FORKGPROF */
-
 				getaddrstring(&remoteaddr, NULL, &remote_port, 0);
 				dropbear_log(LOG_INFO, "Child connection from %s:%s", remote_host, remote_port);
 				m_free(remote_host);
@@ -473,8 +470,6 @@ static void commonsetup() {
 	/* Now we can setup the hostkeys - needs to be after logging is on,
 	 * otherwise we might end up blatting error messages to the socket */
 	load_all_hostkeys();
-
-	seedrandom();
 }
 
 /* Set up listening sockets for all the requested ports */
