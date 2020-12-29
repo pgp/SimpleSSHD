@@ -1274,14 +1274,43 @@ than 128kB, and RECV_MAX_PAYLOAD_LEN hardly matters at all.  So I'm going
 with 512kB / 128kB.  And I confirm, that does work with WinSCP.
 
 
-XXX - ed25519? new dropbear 2020.79!
+December 28, 2020.
 
-XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" />
+Dropbear 2020.79 finally adds support for ed25519, which is a frequent
+comment I've received from users because some openssh configuration
+generates these keys by default I guess?  Anyways, I'm finally updating
+it to 2020.81.
+
+The update went about as you would expect and seems to be successful.  I
+just onnected to my phone using an ed25519 user key for authentication --
+it works!
+
+So that's about time for a new release.  People have apparently been
+waiting since March for the WinSCP fix, though I stopped getting emails
+about it and that's why I haven't bothered with it.
+
+The only thing pending is updating to the SDK needed for the play store.
+Supposedly they require 29 today and will require 30 in aug 2021.  I
+happen to have already used 30 for TunerTime, so I know I've got the SDK
+version 30 installed all the way, so that's what I'm gonna aim for I
+guess.
+
+It's currently at 28, so that's not a huge step...
+
+Looking at the list of things to expect when updating to SDK 30, the only
+one that looks relevant is "scoped storage enforcement", which is just
+the /sdcard nightmare that we've known all along is getting worse.
+
+XXX - move versionCode into build.gradle from AndroidManifest
+
+
+
 XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
 XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens
 XXX - crash.20200109
 XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
+XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" />
 XXX - restart the daemon on app upgrade
        <receiver android:name="com.google.android.apps.youtube.app.PackageReplacedReceiver">
             <intent-filter>
