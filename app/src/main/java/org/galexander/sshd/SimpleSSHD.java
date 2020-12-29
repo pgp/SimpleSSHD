@@ -132,7 +132,7 @@ public class SimpleSSHD extends Activity
 		b.setTitle("About");
 		b.setMessage(
 "SimpleSSHD version " + my_version() +
-"\ndropbear 2019.78" +
+"\ndropbear 2020.81" +
 "\nscp/sftp from OpenSSH 6.7p1" +
 "\nrsync 3.1.1");
 		b.show();
