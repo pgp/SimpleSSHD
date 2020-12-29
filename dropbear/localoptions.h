@@ -83,7 +83,7 @@ much traffic. */
 #define DROPBEAR_3DES 1
 #define DROPBEAR_AES256 1
 /* Compiling in Blowfish will add ~6kB to runtime heap memory usage */
-#define DROPBEAR_BLOWFISH 1
+//#define DROPBEAR_BLOWFISH 1
 #define DROPBEAR_TWOFISH256 1
 #define DROPBEAR_TWOFISH128 1
 
