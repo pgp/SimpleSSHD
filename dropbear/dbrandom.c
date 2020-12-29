@@ -56,6 +56,7 @@ process_file(hash_state *hs, const char *filename,
 	int readfd = -1;
 	unsigned int readcount;
 	int ret = DROPBEAR_FAILURE;
+	int already_blocked = 0;
 
 	if (prngd) {
 #if DROPBEAR_USE_PRNGD
@@ -73,7 +74,13 @@ process_file(hash_state *hs, const char *filename,
 	while (wantlen == 0 || readcount < wantlen) {
 		int readlen, wantread;
 		unsigned char readbuf[4096];
-<<<<<<< HEAD
+/* <<<<<<< HEAD
+ * dropbear removed this code between 2019.78 and 2020.81, I guess they didn't
+ * really care because all it does is print a warning (I added the break that
+ * makes already_blocked non-optional).  I think somebody went through here with
+ * a mind towards guaranteeing there is always sufficient entropy to prevent
+ * obvious attacks, but I don't care.  My change (commit 60fcaa6) solved a real
+ * problem so I'm preserving this hack. - Greg 2020/12/28 */
 		if (!already_blocked && !prngd)
 		{
 			int res;
@@ -94,12 +101,10 @@ process_file(hash_state *hs, const char *filename,
 		}
 
 		if (already_blocked) break;
+/* =======
+ * >>>>>>> dropbear */
 
-		if (len == 0)
-		{
-=======
 		if (wantlen == 0) {
->>>>>>> dropbear
 			wantread = sizeof(readbuf);
 		} else {
 			wantread = MIN(sizeof(readbuf), wantlen-readcount);
