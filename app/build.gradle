@@ -26,6 +26,9 @@ android {
         applicationId "org.galexander.sshd"
         minSdkVersion 17
         targetSdkVersion 30
+
+        versionCode 24
+        versionName "24"
     }
 
     buildTypes {
