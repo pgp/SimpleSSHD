@@ -302,3 +302,4 @@ be overridden at runtime with -I. 0 disables idle timeouts */
 
 #define BUNDLED_LIBTOM 1
 #define DROPBEAR_ED25519 1
+#define DROPBEAR_ENABLE_GCM_MODE 1

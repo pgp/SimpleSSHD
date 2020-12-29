@@ -30,6 +30,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/ecdsa.c \
 	$(DROPBEAR_PATH)/ed25519.c \
 	$(DROPBEAR_PATH)/fake-rfc2553.c \
+	$(DROPBEAR_PATH)/gcm.c \
 	$(DROPBEAR_PATH)/gendss.c \
 	$(DROPBEAR_PATH)/gened25519.c \
 	$(DROPBEAR_PATH)/genrsa.c \
