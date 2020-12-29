@@ -9,6 +9,7 @@ DROPBEAR_PATH := ../dropbear
 DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/bignum.c \
 	$(DROPBEAR_PATH)/buffer.c \
+	$(DROPBEAR_PATH)/chachapoly.c \
 	$(DROPBEAR_PATH)/circbuffer.c \
 	$(DROPBEAR_PATH)/common-algo.c \
 	$(DROPBEAR_PATH)/common-channel.c \
@@ -27,8 +28,10 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/dss.c \
 	$(DROPBEAR_PATH)/ecc.c \
 	$(DROPBEAR_PATH)/ecdsa.c \
+	$(DROPBEAR_PATH)/ed25519.c \
 	$(DROPBEAR_PATH)/fake-rfc2553.c \
 	$(DROPBEAR_PATH)/gendss.c \
+	$(DROPBEAR_PATH)/gened25519.c \
 	$(DROPBEAR_PATH)/genrsa.c \
 	$(DROPBEAR_PATH)/gensignkey.c \
 	$(DROPBEAR_PATH)/keyimport.c \
@@ -132,6 +135,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/pmac/pmac_process.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/pmac/pmac_shift_xor.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/pmac/pmac_test.c \
+	$(DROPBEAR_PATH)/libtomcrypt/src/mac/poly1305/poly1305.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/xcbc/xcbc_done.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/xcbc/xcbc_file.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/xcbc/xcbc_init.c \
@@ -325,6 +329,10 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sober128.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sprng.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/yarrow.c \
+	$(DROPBEAR_PATH)/libtomcrypt/src/stream/chacha/chacha_crypt.c \
+	$(DROPBEAR_PATH)/libtomcrypt/src/stream/chacha/chacha_ivctr64.c \
+	$(DROPBEAR_PATH)/libtomcrypt/src/stream/chacha/chacha_keystream.c \
+	$(DROPBEAR_PATH)/libtomcrypt/src/stream/chacha/chacha_setup.c \
 	$(DROPBEAR_PATH)/libtommath/bn_cutoffs.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_2expt.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_abs.c \

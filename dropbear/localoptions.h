@@ -301,3 +301,4 @@ be overridden at runtime with -I. 0 disables idle timeouts */
 #define DROPBEAR_SVR_MULTIUSER 0
 
 #define BUNDLED_LIBTOM 1
+#define DROPBEAR_ED25519 1
