@@ -160,15 +160,8 @@ int signkey_generate(enum signkey_type keytype, int bits, const char* filename, 
 	if (link(fn_temp, filename) < 0) {
 		/* If generating keys on connection (skipexist) it's OK to get EEXIST 
 		- we probably just lost a race with another connection to generate the key */
-<<<<<<< HEAD
-		/* fallback to rename() if the fs doesn't support link() */
 		if ((!(skip_exist && errno == EEXIST)) &&
 		    (rename(fn_temp, filename) < 0)) {
-			dropbear_log(LOG_ERR, "Failed moving key file to %s: %s", filename,
-				strerror(errno));
-			ret = DROPBEAR_FAILURE;
-=======
-		if (!(skip_exist && errno == EEXIST)) {
 			if (errno == EPERM || errno == EACCES) {
 				/* Non-atomic fallback when hard-links not allowed or unsupported */
 				buf_setpos(buf, 0);
@@ -179,7 +172,6 @@ int signkey_generate(enum signkey_type keytype, int bits, const char* filename, 
 				ret = DROPBEAR_FAILURE;
 			}
 
->>>>>>> dropbear
 			goto out;
 		}
 	}

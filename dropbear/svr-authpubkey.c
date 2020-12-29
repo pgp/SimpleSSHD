@@ -380,18 +380,7 @@ static int checkpubkey(const char* keyalgo, unsigned int keyalgolen,
 
 	TRACE(("enter checkpubkey"))
 
-<<<<<<< HEAD
-	/* check that we can use the algo */
-	if (have_algo(algo, algolen, sshhostkey) == DROPBEAR_FAILURE) {
-		dropbear_log(LOG_WARNING,
-				"Pubkey auth attempt with unknown algo for '%s' from %s",
-				ses.authstate.pw_name, svr_ses.addrstring);
-		goto out;
-	}
-
 #if 0
-=======
->>>>>>> dropbear
 	/* check file permissions, also whether file exists */
 	if (checkpubkeyperms() == DROPBEAR_FAILURE) {
 		TRACE(("bad authorized_keys permissions, or file doesn't exist"))
