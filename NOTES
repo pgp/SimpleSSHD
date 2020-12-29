@@ -1301,16 +1301,15 @@ Looking at the list of things to expect when updating to SDK 30, the only
 one that looks relevant is "scoped storage enforcement", which is just
 the /sdcard nightmare that we've known all along is getting worse.
 
-XXX - move versionCode into build.gradle from AndroidManifest
 
 
 
 XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
-XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens
+XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens (https://developer.android.com/guide/topics/ui/look-and-feel/darktheme)
 XXX - crash.20200109
 XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
-XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" />
+XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" /> (and if that's dynamic, could we make the install app permission also dynamic??)
 XXX - restart the daemon on app upgrade
        <receiver android:name="com.google.android.apps.youtube.app.PackageReplacedReceiver">
             <intent-filter>
@@ -1324,9 +1323,5 @@ XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
 XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves
 
 --- new release
-
-XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
-
-XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
 
 XXX - libiconv? HAVE_ICONV_H etc
