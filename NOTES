@@ -1294,6 +1294,7 @@ the /sdcard nightmare that we've known all along is getting worse.
 
 
 
+XXX - Remy B says I try going back to SDK 29 and doing requestLegacyExternalStorage, and then when i am forced to upgrade to SDK 30, by then MANAGE_EXTERNAL_STORAGE should be available?
 XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
 XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens (https://developer.android.com/guide/topics/ui/look-and-feel/darktheme)
