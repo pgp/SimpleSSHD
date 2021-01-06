@@ -7,21 +7,11 @@ ant.properties symlink with an empty file.  You'll have to build a
 a debug apk on top of a release one, so you have to remove stock
 SimpleSSHD first before installing the debug build.
 
-Then follow these steps (roughly the "doit" script):
+Then follow the steps in the "doit" script (you will need to change the
+last line to indicate how you install the app on your phone or emulator).
 
-   ndk-build -j8 &&
-   mv libs/armeabi/scp libs/armeabi/libscp.so &&
-   mv libs/armeabi/sftp-server libs/armeabi/libsftp-server.so &&
-   mv libs/armeabi/rsync libs/armeabi/librsync.so &&
-   mv libs/armeabi/buffersu libs/armeabi/libbuffersu.so &&
-   mv libs/x86/scp libs/x86/libscp.so &&
-   mv libs/x86/sftp-server libs/x86/libsftp-server.so &&
-   mv libs/x86/rsync libs/x86/librsync.so &&
-   mv libs/x86/buffersu libs/x86/libbuffersu.so &&
-   ant debug
-
-The mv steps are very important, because ant will only package the
-necessary binaries if they have a .so extension (even though they are
+The mv steps in "doit" are very important, because ant will only package
+the necessary binaries if they have a .so extension (even though they are
 stand alone executables).
 
 
