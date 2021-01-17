@@ -53,7 +53,7 @@ public class SimpleSSHD extends Activity
 		synchronized (lock) {
 			curr = this;
 		}
-		permission();
+		permission_startup();
 		update_startstop_prime();
 		updater = new UpdaterThread();
 		updater.start();
@@ -88,6 +88,9 @@ public class SimpleSSHD extends Activity
 			case R.id.resetkeys:
 				resetkeys_clicked(null);
 				return true;
+			case R.id.trypermission:
+				permission_clicked(null);
+				return true;
 			case R.id.doc:
 				doc_clicked(null);
 				return true;
@@ -110,6 +113,9 @@ public class SimpleSSHD extends Activity
 	}
 	public void resetkeys_clicked(View v) {
 		reset_keys();
+	}
+	public void permission_clicked(View v) {
+		permission_menu();
 	}
 	public void doc_clicked(View v) {
 		try {
@@ -312,7 +318,7 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	public void permission() {
+	private void permission_startup() {
 		if (android.os.Build.VERSION.SDK_INT < 23) {
 			return;
 		}
@@ -320,6 +326,22 @@ public class SimpleSSHD extends Activity
 			return;
 		}
 		if (Prefs.get_requested()) {	/* already asked once */
+			return;
+		}
+		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+	}
+
+	private void toast(String s) {
+		Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+	}
+
+	private void permission_menu() {
+		if (android.os.Build.VERSION.SDK_INT < 23) {
+			toast("Your phone uses an Android version that grants external storage access by default.");
+			return;
+		}
+		if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+			toast("External storage permission already granted.");
 			return;
 		}
 		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);

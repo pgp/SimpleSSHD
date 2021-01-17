@@ -61,9 +61,12 @@
 	    android:text="Reset Keys"
 	    android:onClick="resetkeys_clicked" />
 	<Button style="@style/tv_button" android:id="@+id/option4"
+	    android:text="Enable /sdcard"
+	    android:onClick="permission_clicked" />
+	<Button style="@style/tv_button" android:id="@+id/option5"
 	    android:text="Documentation"
 	    android:onClick="doc_clicked" />
-	<Button style="@style/tv_button" android:id="@+id/option5"
+	<Button style="@style/tv_button" android:id="@+id/option6"
 	    android:nextFocusDown="@+id/startstop"
 	    android:text="About"
 	    android:onClick="about_clicked" />
