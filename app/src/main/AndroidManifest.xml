@@ -10,7 +10,8 @@
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <application android:label="SimpleSSHD" android:icon="@drawable/icon"
 	  android:allowBackup="false" android:banner="@drawable/tvbanner"
-	  android:usesCleartextTraffic="true">
+	  android:usesCleartextTraffic="true"
+	  android:requestLegacyExternalStorage="true">
         <activity android:name="SimpleSSHD" android:label="SimpleSSHD"
 	    android:launchMode="singleTask">
             <intent-filter>
