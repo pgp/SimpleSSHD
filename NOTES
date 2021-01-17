@@ -1294,20 +1294,20 @@ the /sdcard nightmare that we've known all along is getting worse.
 
 
 
-XXX - Remy B says I try going back to SDK 29 and doing requestLegacyExternalStorage, and then when i am forced to upgrade to SDK 30, by then MANAGE_EXTERNAL_STORAGE should be available?
-XXX - Rich D has problem with ssh-rsa key "Exit before auth from <192.168.10.123:58978>:(user 'user', 0 fails): Non-matching signing type" but ssh -vvv on other side says "debug1: Authentication succeeded (publickey)." before it notices the remote closed the connection.  client is mint 18.3 (https://svn.dd-wrt.com/changeset/44047)
-XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
-XXX - on android 6 (duckling moto g2), the notification is white-on-white?
-XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens (https://developer.android.com/guide/topics/ui/look-and-feel/darktheme)
-XXX - crash.20200109
-XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
-XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" /> (and if that's dynamic, could we make the install app permission also dynamic??)
 XXX - restart the daemon on app upgrade
        <receiver android:name="com.google.android.apps.youtube.app.PackageReplacedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
+XXX - Rich D has problem with ssh-rsa key "Exit before auth from <192.168.10.123:58978>:(user 'user', 0 fails): Non-matching signing type" but ssh -vvv on other side says "debug1: Authentication succeeded (publickey)." before it notices the remote closed the connection.  client is mint 18.3 (https://svn.dd-wrt.com/changeset/44047)
+XXX - when i am forced to upgrade to SDK 30, request MANAGE_EXTERNAL_STORAGE permission
+XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
+XXX - on android 6 (duckling moto g2), the notification is white-on-white?
+XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens (https://developer.android.com/guide/topics/ui/look-and-feel/darktheme)
+XXX - crash.20200109
+XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
+XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" /> (and if that's dynamic, could we make the install app permission also dynamic??)
 XXX - why doesn't "ssh -R 2223:192.168.1.254:80 mouse" work?
 
 XXX - figure out how to force a screen refresh on eink devices (onyx boox) when the password is displayed (Roman)
