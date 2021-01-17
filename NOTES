@@ -1294,12 +1294,6 @@ the /sdcard nightmare that we've known all along is getting worse.
 
 
 
-XXX - restart the daemon on app upgrade
-       <receiver android:name="com.google.android.apps.youtube.app.PackageReplacedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-            </intent-filter>
-        </receiver>
 XXX - Rich D has problem with ssh-rsa key "Exit before auth from <192.168.10.123:58978>:(user 'user', 0 fails): Non-matching signing type" but ssh -vvv on other side says "debug1: Authentication succeeded (publickey)." before it notices the remote closed the connection.  client is mint 18.3 (https://svn.dd-wrt.com/changeset/44047)
 XXX - when i am forced to upgrade to SDK 30, request MANAGE_EXTERNAL_STORAGE permission
 XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
