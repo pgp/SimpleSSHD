@@ -1330,18 +1330,18 @@ sense from grepping around the dropbear source:
 So confusion between those two sounds likely to me.
 
 
-XXX - when i am forced to upgrade to SDK 30, request MANAGE_EXTERNAL_STORAGE permission
-XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
+XXX - crash.20200109
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
 XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens (https://developer.android.com/guide/topics/ui/look-and-feel/darktheme)
-XXX - crash.20200109
 XXX - if the unlink(authorized_keys) fails, or if the open() fails for permission reasons, generate a Toast for the user. (confirmed that restorecon -F authorized_keys works)
-XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" /> (and if that's dynamic, could we make the install app permission also dynamic??)
 XXX - why doesn't "ssh -R 2223:192.168.1.254:80 mouse" work?
+
+XXX - when i am forced to upgrade to SDK 30, request MANAGE_EXTERNAL_STORAGE permission
+XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
+XXX - ability to dynamically request <uses-permission-sdk-23 android:name="android.permission.SEND_SMS" /> (and if that's dynamic, could we make the install app permission also dynamic??)
 
 XXX - figure out how to force a screen refresh on eink devices (onyx boox) when the password is displayed (Roman)
 XXX - Tasker on Android 9 can't trigger the new START/STOP intents? (Kumaran)
-XXX - test file renaming in /storage/emulated/0/download on Quiche for Ben Reaves
 
 --- new release
 
