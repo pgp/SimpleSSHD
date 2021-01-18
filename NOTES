@@ -1337,6 +1337,31 @@ Triaged the crashes again.  crash.20200109 is the only one that bothers
 me.  It will probably continue at a low incidence until I figure out
 what's causing it.
 
+...
+
+Oh and!  There is one more interesting problem, reported by Brad R and
+Andreas S.  Maybe it's different problems??  The thing in common is that
+they aren't seeing anything displayed from the dropbear.err file, and
+then they aren't able to connect.  But Brad R says he used netstat and it
+really is listening on the port, and he sent me a ssh -vvv report that
+seems to show the server dropping connection after the client has
+received an SSH2_MSG_KEXINIT, while waiting for a response to
+SSH_MSG_KEXDH_INIT. So I guess the server must be running?
+
+Andreas S concluded that the server isn't running, due to the lack of
+displayed dropbear.err output.  That made sense to me at first, but now I
+think maybe his server is also running, just not working??
+
+So one possible explanation for both of them is that they have put their
+dropbear directory under /sdcard, and the external storage charley
+foxtrot has made them unable to access their server's host key at the
+same time as making them unable to diagnose the problem (unable to read
+dropbear.err).  I haven't yet asked either of them if they have
+configured it to use /sdcard.
+
+But I'm worried there's something more fundamental going on.  We'll see
+if they report any progress with version 27 that I just released.
+
 
 XXX - crash.20200109
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
