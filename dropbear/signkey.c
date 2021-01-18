@@ -657,7 +657,13 @@ int buf_verify(buffer * buf, sign_key *key, enum signature_type expect_sigtype, 
 	sigtype = signature_type_from_name(type_name, type_name_len);
 	m_free(type_name);
 
-	if (expect_sigtype != sigtype) {
+	if (((expect_sigtype == DROPBEAR_SIGNATURE_RSA_SHA256) &&
+	     (sigtype == DROPBEAR_SIGNATURE_RSA_SHA1)) ||
+	    ((expect_sigtype == DROPBEAR_SIGNATURE_RSA_SHA1) &&
+	     (sigtype == DROPBEAR_SIGNATURE_RSA_SHA256))) {
+		/* ignore mismatch between different flavors of ssh-rsa
+		 * - Greg 2021/01/17 */
+	} else if (expect_sigtype != sigtype) {
 			dropbear_exit("Non-matching signing type");
 	}
 

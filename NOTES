@@ -1292,9 +1292,44 @@ one that looks relevant is "scoped storage enforcement", which is just
 the /sdcard nightmare that we've known all along is getting worse.
 
 
+January 17, 2021.
+
+I have had a little luck today...  I tested a little with
+requestLegacyExternalStorage and API 29, on an emulated Android 11, and
+it seems to work.  Users will likely need to use the new "Enable /sdcard"
+menu option.
+
+Also, it turns out to be trivial to honor the MY_PACKAGE_REPLACED
+(package upgrade) intent using the same receiver as BOOT_COMPLETED, which
+is going to be great for people going forward.
+
+I have been banging on the problem people have reported with
+"Non-matching signing type." with older versions of OpenSSH.  I've been
+told it's the OpenSSH 7.2p2 that ships stock with Ubuntu 16.04 and Mint
+18.3.  Rich D did the legwork and found it is probably
+https://svn.dd-wrt.com/ticket/7179
+
+There is a new check for expect_sigtype != sigtype in dropbear 2020.81.
+The fix the dd-wrt guys came up with is simply to disable that check if
+expect_sigtype == DROPBEAR_SIGNATURE_RSA_SHA256.  I don't like simply
+disabling the check, because I don't know what the role of the check is.
+I don't want to be a blind fool.
+
+It sounds like there's one protocol string "ssh-rsa" that can also be
+used to represent "rsa-sha2-256".  I did not bother to trace through how
+that string gets converted into these numeric values.  But at the bottom
+of http://lists.openwrt.org/pipermail/openwrt-devel/2020-July/030200.html
+it says the actual signature is DROPBEAR_SIGNATURE_RSA_SHA1.  This makes
+sense from grepping around the dropbear source:
+
+   {"rsa-sha2-256", DROPBEAR_SIGNATURE_RSA_SHA256, NULL, 1, NULL},
+   {"ssh-rsa", DROPBEAR_SIGNATURE_RSA_SHA1, NULL, 1, NULL},
+   DROPBEAR_SIGNATURE_RSA_SHA1 = 100, /* ssh-rsa signature (sha1) */
+   DROPBEAR_SIGNATURE_RSA_SHA256 = 101, /* rsa-sha2-256 signature. has a ssh-rsa key */
+
+So confusion between those two sounds likely to me.
 
 
-XXX - Rich D has problem with ssh-rsa key "Exit before auth from <192.168.10.123:58978>:(user 'user', 0 fails): Non-matching signing type" but ssh -vvv on other side says "debug1: Authentication succeeded (publickey)." before it notices the remote closed the connection.  client is mint 18.3 (https://svn.dd-wrt.com/changeset/44047)
 XXX - when i am forced to upgrade to SDK 30, request MANAGE_EXTERNAL_STORAGE permission
 XXX - Vitalii suggests giving an error message for unrecognized key types (ed25519) that are encountered in authorized_keys, so the user doesn't have to stab in the dark
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
