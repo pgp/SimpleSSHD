@@ -1,0 +1,23 @@
+java.lang.IllegalStateException: 
+  at android.os.Parcel.createException (Parcel.java:1958)
+  at android.os.Parcel.readException (Parcel.java:1918)
+  at android.os.Parcel.readException (Parcel.java:1868)
+  at android.app.IActivityManager$Stub$Proxy.reportAssistContextExtras (IActivityManager.java:7107)
+  at android.app.ActivityThread.handleRequestAssistContextExtras (ActivityThread.java:3212)
+  at android.app.ActivityThread$H.handleMessage (ActivityThread.java:1764)
+  at android.os.Handler.dispatchMessage (Handler.java:106)
+  at android.os.Looper.loop (Looper.java:193)
+  at android.app.ActivityThread.main (ActivityThread.java:6669)
+  at java.lang.reflect.Method.invoke (Native Method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run (RuntimeInit.java:493)
+  at com.android.internal.os.ZygoteInit.main (ZygoteInit.java:858)
+Caused by: android.os.RemoteException: 
+  at android.app.ContextImpl.startServiceCommon (ContextImpl.java:1577)
+  at android.app.ContextImpl.startServiceAsUser (ContextImpl.java:1549)
+  at com.android.server.am.ActivityManagerService.reportAssistContextExtras (ActivityManagerService.java:14185)
+  at android.app.IActivityManager$Stub.onTransact$reportAssistContextExtras$ (IActivityManager.java:10882)
+  at android.app.IActivityManager$Stub.onTransact (IActivityManager.java:1953)
+
+
+2021/01/17 - reported exactly once on an unknown Android 9 device with
+version 24 of SimpleSSHD.  A mystery I will leave unless it recurs.

@@ -170,6 +170,10 @@ or later if <b>Settings</b> -> <b>Foreground Service</b> is enabled.</p>
 <p>You may need to specify <tt>--user 0</tt> depending on the context:
 <pre>am broadcast --user 0 -a org.galexander.sshd.START org.galexander.sshd</pre></p>
 
+<p>And if Android is ignoring your broadcasts because the app was never started yet (or was force stopped), you may try (it's all arbitrary to me!):
+<pre>am broadcast --user 0 -a org.galexander.sshd.START org.galexander.sshd/.StartReceiver</pre></p>
+
+
 <p>If you are getting an error from <tt>am</tt> like:
 <pre>cmd: Failure calling service activity: Failed transaction (2147483646)</pre>
 it can probably be solved by disassociating <tt>am</tt> from the ssh

@@ -1303,6 +1303,8 @@ Also, it turns out to be trivial to honor the MY_PACKAGE_REPLACED
 (package upgrade) intent using the same receiver as BOOT_COMPLETED, which
 is going to be great for people going forward.
 
+...
+
 I have been banging on the problem people have reported with
 "Non-matching signing type." with older versions of OpenSSH.  I've been
 told it's the OpenSSH 7.2p2 that ships stock with Ubuntu 16.04 and Mint
@@ -1328,6 +1330,12 @@ sense from grepping around the dropbear source:
    DROPBEAR_SIGNATURE_RSA_SHA256 = 101, /* rsa-sha2-256 signature. has a ssh-rsa key */
 
 So confusion between those two sounds likely to me.
+
+...
+
+Triaged the crashes again.  crash.20200109 is the only one that bothers
+me.  It will probably continue at a low incidence until I figure out
+what's causing it.
 
 
 XXX - crash.20200109

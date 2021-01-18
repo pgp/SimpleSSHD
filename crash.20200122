@@ -7,3 +7,7 @@ pid: 0, tid: 0 >>> org.galexander.sshd <<<
 backtrace:
   #00  pc 000000000001a6ac  /system/lib/libc.so (abort+63)
   #01  pc 0000000000020c79  /system/lib/libc.so (sigprocmask+48)
+
+
+2021/01/17 - Looking at the play console today, this crash is not in the
+last 60 days which is all it will show me.  So I guess it's rare.

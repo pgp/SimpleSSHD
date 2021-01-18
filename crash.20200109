@@ -2,7 +2,7 @@ Yesterday, 7:03 PM on app version 24
 OnePlus OnePlus 7T (OnePlus7T), Android 10
 Report 1 of 3
 
-android.app.RemoteServiceException: 
+android.app.RemoteServiceException:
   at android.app.ActivityThread$H.handleMessage (ActivityThread.java:2038)
   at android.os.Handler.dispatchMessage (Handler.java:107)
   at android.os.Looper.loop (Looper.java:214)
@@ -10,3 +10,56 @@ android.app.RemoteServiceException:
   at java.lang.reflect.Method.invoke (Native Method)
   at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run (RuntimeInit.java:516)
   at com.android.internal.os.ZygoteInit.main (ZygoteInit.java:950)
+
+
+2021/01/17 - confirmed this is still happening with version 26 of the
+app, reported on Android 8.1 (SDK 27) and Android 10 (SDK 29).
+
+https://stackoverflow.com/questions/51222082/why-do-i-get-remoteserviceexception-for-creating-updating-a-notification
+suggests it has something to do with the Notification passed to
+startForeground(), but their "workaround" was to only modify the
+Notification from the Service thread, which we already do.
+
+I could not reproduce it under the emulator with Android 8.1 and starting
+the service is several different contexts, including using the START
+broadcast after the app had been force stopped, or when the service had
+started because the package had just been updated (UI not displayed yet).
+I also tested launching the PendingIntent from those contexts.
+
+Looking at ActivityThread.java that came with my SDK and it looks like
+RemoteServiceException() is just called whenever handleMessage() is
+passed a msg.what == SCHEDULE_CRASH, which is sent from
+ApplicationThread.scheduleCrash(), which is called (indirectly) from:
+   ActivityStackSupervisor.PendingActivityLaunch.sendErrorResult()
+      ... ultimately called when there's an exception during a
+      PendingIntent launch, with the string from that exception??
+   BroadcastQueue.performReceiveLocked() on a RemoteException with the
+      string "can't deliver broadcast"
+   ActivityManagerShellCommand.runCrash() with "shell-induced crash"
+   ServiceRecord.postNotification() with "Bad notification for startForeground:"
+   ActiveServices.serviceForegroundCrash() with
+      "Context.startForegroundService() did not then call
+      Service.startForeground():"
+   NativeCrashListener.NativeCrashReporter.run() but I'm not sure it
+      actually makes it into the same crashApplication() or not?
+   RuntimeInit.wtf() not sure where this error winds up either but
+
+Most of those, I think, would be pretty good about putting a message
+there so I'm not clear why no message is provided.
+
+Googling some more:
+   https://github.com/commons-app/apps-android-commons/issues/1877
+      failed to set a NotificationChannel but I think I've already
+      crossed that bridge.
+   https://www.xspdf.com/resolution/50183960.html
+      the XML layout for their Notification specified a manual height for
+      the root element??  the outer element for mine is wrap_content, but
+      one of the contents is an ImageView with a manual size (60dp x
+      60dp) ??  (and many others at this URL) Could maybe be a problem
+      with the res/drawable for the notification icon?
+
+Crashlytics would apparently provide more info -- I'm not clear why
+Google's crash reporter isn't giving me the RemoteServiceException
+message on its own though!  But Crashlytics smells like bloatware to me
+and from looking at the source (/usr/src/firebase-android-sdk), I didn't
+immediately see how it could change the reporting of this sort of crash.
