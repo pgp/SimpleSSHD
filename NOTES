@@ -1363,6 +1363,12 @@ But I'm worried there's something more fundamental going on.  We'll see
 if they report any progress with version 27 that I just released.
 
 
+January 18, 2021.
+
+Andreas S and Brad R wrote back to say their problem is fixed.  I suspect
+their dropbear.err was somehow hidden by the external storage problem.
+
+
 XXX - crash.20200109
 XXX - on android 6 (duckling moto g2), the notification is white-on-white?
 XXX - test Settings and Notifications colors in Pie (or Quiche?) "dark mode" for Alexander Chobot, and for Fionn Behrens (https://developer.android.com/guide/topics/ui/look-and-feel/darktheme)
