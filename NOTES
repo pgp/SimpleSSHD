@@ -1368,6 +1368,9 @@ January 18, 2021.
 Andreas S and Brad R wrote back to say their problem is fixed.  I suspect
 their dropbear.err was somehow hidden by the external storage problem.
 
+
+XXX - --remove-source-files rsync deleting doesn't work?  is unlink() failing or is it trying something else first that fails?
+
 XXX - see if i can reproduce android 11 problem with executing files in app-private
 XXX - see if /data/user_de/0/org.galexander.sshd bypasses it on the emulator??
 XXX - try busybox on android TV again, try putting the binary in "native libs" and sharing it from there
