@@ -1,0 +1,32 @@
+This crash happened 26 times to only one user, who seems to be able to
+use the app since it keeps happening.  A Pixel 6 Pro with Android 12L.
+There are two other crashes that look the same to me, on Pixel 5 Android
+12L, and on Galaxy S21+ Android 12.  So it may be an Android 12 issue.
+
+Not sure if I've put too much blocking crap in do_startservice() or if
+Android is starving us of CPU and it's impossible to satisfy the
+requirement.
+
+
+android.app.RemoteServiceException$ForegroundServiceDidNotStartInTimeException: 
+  at android.app.ActivityThread.generateForegroundServiceDidNotStartInTimeException (ActivityThread.java:1965)
+  at android.app.ActivityThread.throwRemoteServiceException (ActivityThread.java:1936)
+  at android.app.ActivityThread.access$2700 (ActivityThread.java:256)
+  at android.app.ActivityThread$H.handleMessage (ActivityThread.java:2190)
+  at android.os.Handler.dispatchMessage (Handler.java:106)
+  at android.os.Looper.loopOnce (Looper.java:201)
+  at android.os.Looper.loop (Looper.java:288)
+  at android.app.ActivityThread.main (ActivityThread.java:7870)
+  at java.lang.reflect.Method.invoke (Native Method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run (RuntimeInit.java:548)
+  at com.android.internal.os.ZygoteInit.main (ZygoteInit.java:1003)
+Caused by: android.app.StackTrace: 
+  at android.app.ContextImpl.startServiceCommon (ContextImpl.java:1876)
+  at android.app.ContextImpl.startForegroundService (ContextImpl.java:1831)
+  at android.content.ContextWrapper.startForegroundService (ContextWrapper.java:779)
+  at android.content.ContextWrapper.startForegroundService (ContextWrapper.java:779)
+  at org.galexander.sshd.SimpleSSHDService.do_startService (SimpleSSHDService.java:226)
+  at org.galexander.sshd.StopReceiver.onReceive (StopReceiver.java:9)
+  at android.app.ActivityThread.handleReceiver (ActivityThread.java:4375)
+  at android.app.ActivityThread.access$1600 (ActivityThread.java:256)
+  at android.app.ActivityThread$H.handleMessage (ActivityThread.java:2102)

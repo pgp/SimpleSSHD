@@ -1371,6 +1371,8 @@ their dropbear.err was somehow hidden by the external storage problem.
 
 XXX - for Jose Miguel, script to run when user clicks 'start' or even when IP changes?  to like use curl to notify about a dynamic IP..
 
+XXX - update rsync version for Michael H
+
 XXX - --remove-source-files rsync deleting doesn't work?  is unlink() failing or is it trying something else first that fails?
 
 XXX - see if i can reproduce android 11 problem with executing files in app-private
