@@ -1369,6 +1369,52 @@ Andreas S and Brad R wrote back to say their problem is fixed.  I suspect
 their dropbear.err was somehow hidden by the external storage problem.
 
 
+May 13, 2022.
+
+Just got an astonishing email from an anonymizer service.  Hopefully they
+don't mind me pasting the contents here, because I don't have time to
+look into it at the moment.  They suggest a resolution for
+crash.20220424:
+
+   Hello,
+
+   I see recent git change for your simplesshd app for
+   RemoteServiceException. I worked on fixing that in my own app before
+   and some devices have the issue, some don't. Its with the foreground
+   notification use that people have been using and is something Google
+   hasn't fixed.
+
+   You can work around it by using WorkManager and Worker. You don't need
+   to use the foreground stuff that way. I switched over my own apps that
+   way successfully and no more problems from that situation.
+
+   You can lookup "RemoteServiceException workmanager" and a stack
+   overflow page suggests this which is the only way I found to solve it.
+
+   I see you will also need to include the Android 11+ storage usage of
+   asking the user to select a folder for access using new
+   Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), getting repeat URI use of
+   the path &amp; files from DocumentFile via
+   DocumentFile.fromTreeUri(context, uri) for reading and writing to go
+   with it for all the public storage use.
+
+   Hope that helps.
+
+   I'm just sending from a temporary email address. Don't reply as I
+   won't get it. I'm not interested in back and forth :-)
+
+I have faith that's a useful breadcrumb for RemoteServiceException.  I'm
+not sure what the ACTION_OPEN_DOCUMENT_TREE part has to do with...I've
+looked into that before and was unable to figure out a way to use that to
+directly access the filesystem in a sensible fashion but maybe there is a
+way to get a real unix path access from it, or maybe it has improved
+somewhat since the last time I looked at it.  I probably won't be able to
+make sense of that part until I am stuck with a phone that limits me and
+I need to actually work through it.  Maybe when I set up an Android 12
+emulator I will see what's up.
+
+
+
 XXX - for Jose Miguel, script to run when user clicks 'start' or even when IP changes?  to like use curl to notify about a dynamic IP..
 
 XXX - update rsync version for Michael H
