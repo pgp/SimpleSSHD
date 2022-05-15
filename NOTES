@@ -1415,6 +1415,8 @@ emulator I will see what's up.
 
 
 
+XXX - message about can't do background service on oreo should say oreo or later
+
 XXX - for Jose Miguel, script to run when user clicks 'start' or even when IP changes?  to like use curl to notify about a dynamic IP..
 
 XXX - update rsync version for Michael H
