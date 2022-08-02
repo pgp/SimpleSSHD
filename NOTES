@@ -1414,6 +1414,34 @@ I need to actually work through it.  Maybe when I set up an Android 12
 emulator I will see what's up.
 
 
+August 2, 2022.
+
+Got a new phone, with Android 11.  SimpleSSHD seems to be a lot more
+thoroughly unscheduled if it is in the background...I have to bring it to
+the foreground manually to accept a connection, and if it's not a bulk
+rsync then I need to stay in the foreground to even continue the existing
+connection.
+
+But just looking through Settings -> Addition settings -> Developer
+options, I noticed "Suspend execution for cached apps".  I disabled it,
+and now sshd is responsive all the time.  So that's something worth
+sharing with the user.  But also, it might not even be necessary for the
+user to do it:
+
+   As a workaround, if an app has a process that needs to perform
+   activities while cached, change the process status to non-cached (such
+   as Bound ForeGround Service (BFGS) or foreground) before the process
+   needs to do any work to allow the app to remain active.
+
+I don't know what that means, but it seems like an indication that there
+is perhaps some new / advanced "foreground service" mode.
+
+
+XXX - try MANAGE_EXTERNAL_STORAGE permission -> ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION intent action, will that help??
+
+XXX - why is it 100% starved of foreground service cpu time, unless it happens to have been running when i switched away from the app
+XXX - why won't it start on boot?
+
 
 XXX - message about can't do background service on oreo should say oreo or later
 
