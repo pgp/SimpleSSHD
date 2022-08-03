@@ -1437,6 +1437,75 @@ I don't know what that means, but it seems like an indication that there
 is perhaps some new / advanced "foreground service" mode.
 
 
+August 22, 2022.
+
+It's freezing it again today.  Here is it freezing it while it's executing
+   $ while true; do date; sleep 1; date
+
+ 08-02 22:17:17.534 1926 4196 I OplusHansManager : freeze uid: 10278
+   org.galexander.sshd pids: [6026, 5953, 5952, 5948, 5946, 3666, 3665,
+   3614, 3568] scene: LcdOn
+ 08-02 22:17:19.540 8813 23721 D IHansComunication: HANS
+   sendMessageToKernel: threadId = 540790373568, netLinkSetup = 1, type =
+   FROZEN_TRANS, targetUid = 10278, pkgCmd = PKG_CMD_MAX
+ 08-02 22:19:27.124 1926 4197 I OplusHansManager : unfreeze uid: 10278
+   org.galexander.sshd pids: [6026, 5953, 5952, 5948, 5946, 3666, 3665,
+   3614, 3568] reason: AsyncBinder scene: LcdOn
+ 08-02 22:19:27.125 1926 4196 I OplusHansManager : uid=10278,
+   pkg=org.galexander.sshd, transition from Frozen to Middle,
+   reason=AsyncBinder
+ 08-02 22:19:27.128 1926 4197 I OplusHansManager : unfreeze uid: 10320
+   org.galexander.soft84 pids: [31948] reason: AsyncBinder scene: LcdOn
+ 08-02 22:19:27.129 1926 4196 I OplusHansManager : uid=10320,
+   pkg=org.galexander.soft84, transition from Frozen to Middle,
+   reason=AsyncBinder
+ 08-02 22:19:27.130 1926 4197 I OplusHansManager : unfreeze uid: 10317
+   org.galexander.bluntmp3 pids: [22587] reason: AsyncBinder scene: LcdOn
+ 08-02 22:19:27.131 1926 4196 I OplusHansManager : uid=10317,
+   pkg=org.galexander.bluntmp3, transition from Frozen to Middle,
+   reason=AsyncBinder
+ 08-02 22:19:37.147 1926 4196 I OplusHansManager : freeze uid: 10278
+   org.galexander.sshd pids: [6195, 5953, 5952, 5948, 5946, 3666, 3665,
+   3614, 3568] scene: LcdOn
+ 08-02 22:19:37.157 1926 4196 I OplusHansManager : freeze uid: 10320
+   org.galexander.soft84 pids: [31948] scene: LcdOn
+ 08-02 22:19:37.163 1926 4196 I OplusHansManager : freeze uid: 10317
+   org.galexander.bluntmp3 pids: [22587] scene: LcdOn
+ 08-02 22:19:39.155 8813 23721 D IHansComunication: HANS
+   sendMessageToKernel: threadId = 540790373568, netLinkSetup = 1, type =
+   FROZEN_TRANS, targetUid = 10278, pkgCmd = PKG_CMD_MAX
+ 08-02 22:19:39.161 8813 8835 D IHansComunication: HANS
+   sendMessageToKernel: threadId = 540790373568, netLinkSetup = 1, type =
+   FROZEN_TRANS, targetUid = 10320, pkgCmd = PKG_CMD_MAX
+ 08-02 22:19:39.165 8813 8835 D IHansComunication: HANS
+   sendMessageToKernel: threadId = 540790373568, netLinkSetup = 1, type =
+   FROZEN_TRANS, targetUid = 10317, pkgCmd = PKG_CMD_MAX
+
+So it decides to freeze it after a while, and then unfreezes it
+"reason=AsyncBinder" every now and then for about 10 seconds at a time.
+
+The two processes involved:
+   system         1926    841 13580368 523424 0           0 S system_server
+   system         8813      1 2182528   1084 0            0 S hans
+
+I'm trying to see if system_server, at least, might be part of their open
+source package.  It doesn't look like it.  I started downloading their
+repo but it's almost entirely AOSP, and the parts they provide (at least
+/usr/src/oneplus/android_system_core/) don't seem to be very useful.
+
+I made a copy of its /system in ~/mole/system, and it looks like the
+following .jar files in framework/ all reference Hans something:
+   ext.jar
+   framework.jar
+   oplus-framework.jar
+   oplus-internal-services.jar
+   oplus-services.jar
+   service-jobscheduler.jar
+   services.jar
+
+So that's a lead for now.
+
+
 XXX - try MANAGE_EXTERNAL_STORAGE permission -> ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION intent action, will that help??
 
 XXX - why is it 100% starved of foreground service cpu time, unless it happens to have been running when i switched away from the app
