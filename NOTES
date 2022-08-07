@@ -1506,6 +1506,70 @@ following .jar files in framework/ all reference Hans something:
 So that's a lead for now.
 
 
+August 6, 2022.
+
+I noticed that for the past couple days, write access to /sdcard has gone
+away!  I felt like I was being gaslit, because I was sure it had worked.
+Turns out, I had accidentally disabled write access in SimpleSSHD while I
+was working on NGN!  Oh!  The human capacity for error.  So I am still
+able to write into /sdcard on a decently modern phone and that is a huge
+reassurance about the possible future of SimpleSSHD on Android!
+
+Anyways, when I restored write access, I re-installed the app and got to
+see something which might substitute for start-on-boot failing:
+
+ 08-06 17:45:17.415 4694 4694 I NotificationBackend: onReceive package
+   intent= Intent { act=android.intent.action.PACKAGE_REPLACED
+   dat=package:org.galexander.sshd flg=0x4000010 (has extras) }
+  ...
+ 08-06 17:45:17.834 1878 2105 W BroadcastQueue: Background execution not
+   allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED
+   dat=package:org.galexander.sshd flg=0x4000010 (has extras) } to
+   com.google.android.packageinstaller/com.android.packageinstaller.Packa
+   ge InstalledReceiver
+  ...
+ 08-06 17:45:17.880 1878 2105 W BroadcastQueue: Background execution not
+   allowed: receiving Intent { act=android.intent.action.PACKAGE_REPLACED
+   dat=package:org.galexander.sshd flg=0x4000010 (has extras) } to
+   com.google.android.gms/.gass.chimera.PackageChangeBroadcastReceiver
+
+It's probably not interesting but I was surprised to see that each of the
+BroadcastQueue errors repeated 5x in the log, as if it was expected to
+succeed.
+
+I was expecting the problem to be that the broadcast receiver was
+triggering but wasn't allowed to spawn a foreground service or something
+like that, but it looks like the receiver is rejected much earlier.
+stackoverflow confirms that people are getting the same problem with
+BOOT_COMPLETED, and that it doesn't call BroadcastReceiver.onReceive() at
+all!
+
+There's a suggestion that it needs to register the receivers using
+context.registerReceiver(new BroadcastReceiver(...), new IntentFilter(...))
+That seems crazy.
+
+It is apparently this:
+
+https://developer.android.com/about/versions/oreo/background#broadcasts
+
+Which I thought I already dealt with in order to receive BOOT_RECEIVER in
+the first place (since I've already been using it under Oreo, version
+26), but really I think what I'm running into is just that it's no longer
+"grandfathered in" if you declare minSdkVersion 17.
+
+Anyways, the google doc supports the hack of registering the receivers in
+code instead of using AndroidManifest, which is just crazy.
+
+OTOH, MY_PACKAGE_REPLACED is specifically supposed to be allowed in the
+new regime (it is not "implicit" because it has an explicit target)!  And
+there's no reference to MY_PACKAGE_REPLACED in the logcat.
+ACTION_MY_PACKAGE_REPLACED has been part of android.content.intent since
+API 12.
+
+Maybe it's upset seeing both MY_PACKAGE_REPLACE and BOOT_COMPLETED in the
+same broadcast receiver in the XML??
+
+
 XXX - try MANAGE_EXTERNAL_STORAGE permission -> ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION intent action, will that help??
 
 XXX - why is it 100% starved of foreground service cpu time, unless it happens to have been running when i switched away from the app
