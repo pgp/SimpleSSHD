@@ -1570,6 +1570,17 @@ Maybe it's upset seeing both MY_PACKAGE_REPLACE and BOOT_COMPLETED in the
 same broadcast receiver in the XML??
 
 
+August 25, 2022.
+
+Reimer Prochnow sent a patch to use the new Android 11 permissions!  He
+is disappointed that it does not seem to allow more access than before,
+but it will nonetheless probably be necessary when I update to the new
+sdk.
+
+Leaving it in reimer_prochnow-manage_extensions.path until then.
+
+
+
 XXX - try MANAGE_EXTERNAL_STORAGE permission -> ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION intent action, will that help??
 
 XXX - why is it 100% starved of foreground service cpu time, unless it happens to have been running when i switched away from the app

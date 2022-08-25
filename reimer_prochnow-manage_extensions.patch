@@ -1,0 +1,259 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..0c83e19
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,7 @@
++obj/
++dropbear/default_options_guard.h
++.gradle/
++.vscode/
++app/build/
++app/src/main/lib/
++build/
+diff --git a/app/build.gradle b/app/build.gradle
+index d045336..980d396 100644
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -1,7 +1,10 @@
+ apply plugin: 'com.android.application'
+ 
+-def keyprops=new Properties()
+-keyprops.load(new FileInputStream(rootProject.file("keystore.properties")))
++def keystoreProperties = new Properties()
++def keystorePropertiesFile = rootProject.file("keystore.properties")
++if (keystorePropertiesFile.exists()) {
++    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
++}
+ 
+ android {
+     compileSdkVersion 30
+@@ -14,28 +17,42 @@ android {
+     }
+ 
+     signingConfigs {
+-	release {
+-	    keyAlias keyprops['keyAlias']
+-	    keyPassword keyprops['keyPassword']
+-	    storeFile file(keyprops['storeFile'])
+-	    storePassword keyprops['storePassword']
+-	}
++      release {
++        if (keystorePropertiesFile.exists()) {
++          keyAlias keystoreProperties['keyAlias']
++          keyPassword keystoreProperties['keyPassword']
++          storeFile file(keystoreProperties['storeFile'])
++          storePassword keystoreProperties['storePassword']
++        } else {
++          println("key.properties not found")
++        }
++      }
+     }
+ 
+     defaultConfig {
+         applicationId "org.galexander.sshd"
+-        minSdkVersion 17
+-        targetSdkVersion 29
++        minSdkVersion 29
++        targetSdkVersion 30
+ 
+-        versionCode 27
+-        versionName "27"
++        versionCode 28
++        versionName "28"
+     }
+ 
+     buildTypes {
+         release {
+-	    signingConfig signingConfigs.release
+-            minifyEnabled false
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
++          if (keystorePropertiesFile.exists()) {
++            signingConfig signingConfigs.release
++            println "Signing with key.properties"
++          } else {
++                signingConfig signingConfigs.debug
++                println "Signing with debug keys"
++          }
++          minifyEnabled false
++          proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
++        }
++        debug {
++          applicationIdSuffix ".debug"
++          debuggable true
+         }
+     }
+ }
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index 55b171e..4360259 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -1,8 +1,11 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+       package="org.galexander.sshd">
+     <uses-permission android:name="android.permission.INTERNET" />
+-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
++    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
++    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
++        tools:ignore="ScopedStorage" />
+     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+@@ -10,8 +13,7 @@
+     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+     <application android:label="SimpleSSHD" android:icon="@drawable/icon"
+ 	  android:allowBackup="false" android:banner="@drawable/tvbanner"
+-	  android:usesCleartextTraffic="true"
+-	  android:requestLegacyExternalStorage="true">
++	  android:usesCleartextTraffic="true">
+         <activity android:name="SimpleSSHD" android:label="SimpleSSHD"
+ 	    android:launchMode="singleTask">
+             <intent-filter>
+diff --git a/app/src/main/java/org/galexander/sshd/SimpleSSHD.java b/app/src/main/java/org/galexander/sshd/SimpleSSHD.java
+index 3e8fc0e..dc2cbad 100644
+--- a/app/src/main/java/org/galexander/sshd/SimpleSSHD.java
++++ b/app/src/main/java/org/galexander/sshd/SimpleSSHD.java
+@@ -2,6 +2,7 @@ package org.galexander.sshd;
+ 
+ import android.app.Activity;
+ import android.app.AlertDialog;
++import android.os.Build;
+ import android.os.Bundle;
+ import android.content.Context;
+ import android.content.SharedPreferences;
+@@ -37,6 +38,7 @@ public class SimpleSSHD extends Activity
+ 	public static String app_private = null;
+ 	private UpdaterThread updater = null;
+ 	public static boolean is_tv = false;
++  final static int APP_STORAGE_ACCESS_REQUEST_CODE = 2296; // Any value
+ 
+ 	public void onCreate(Bundle savedInstanceState) {
+ 		super.onCreate(savedInstanceState);
+@@ -319,7 +321,7 @@ public class SimpleSSHD extends Activity
+ 	}
+ 
+ 	private void permission_startup() {
+-		if (android.os.Build.VERSION.SDK_INT < 23) {
++		if (Build.VERSION.SDK_INT < 23) {
+ 			return;
+ 		}
+ 		if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+@@ -328,7 +330,7 @@ public class SimpleSSHD extends Activity
+ 		if (Prefs.get_requested()) {	/* already asked once */
+ 			return;
+ 		}
+-		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
++    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 1);
+ 	}
+ 
+ 	private void toast(String s) {
+@@ -336,16 +338,58 @@ public class SimpleSSHD extends Activity
+ 	}
+ 
+ 	private void permission_menu() {
+-		if (android.os.Build.VERSION.SDK_INT < 23) {
++		if (Build.VERSION.SDK_INT < 23) {
+ 			toast("Your phone uses an Android version that grants external storage access by default.");
+ 			return;
+ 		}
+-		if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+-			toast("External storage permission already granted.");
+-			return;
+-		}
+-		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
++    requestPermission();
++/*    if (Build.VERSION.SDK_INT >= 30) {
++      Intent intent = new Intent();
++      intent.setAction(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
++      Uri uri = Uri.fromParts("package", this.getPackageName(), null);
++      intent.setData(uri);
++      startActivity(intent);
++    } else {
++      if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
++        toast("External storage permission already granted.");
++        return;
++      }
++      requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
++    }*/
+ 	}
++  // The below method can be used for requesting a permission in android 11 or below
++  private void requestPermission() {
++    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
++        try {
++            Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
++            intent.addCategory("android.intent.category.DEFAULT");
++            intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
++            startActivityForResult(intent, APP_STORAGE_ACCESS_REQUEST_CODE);
++        } catch (Exception e) {
++            Intent intent = new Intent();
++            intent.setAction(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
++            startActivityForResult(intent, APP_STORAGE_ACCESS_REQUEST_CODE);
++        }
++    } else {
++        //below android 11
++        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
++     }
++   }
++
++    // Handling permission callback for Android 11 or above versions
++    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
++      super.onActivityResult(requestCode, resultCode, data);
++      if (requestCode == APP_STORAGE_ACCESS_REQUEST_CODE) {
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
++            if ( android.os.Environment.isExternalStorageManager()) {
++              toast("External");
++              // perform action when allow permission success
++            } else {
++              toast("Allow permission for storage access!");
++            }
++         }
++     }
++   }
+ 
+ 	public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
+ 		Prefs.set_requested();	/* whatever result, don't ask again */
+diff --git a/doit b/doit
+index 8e9b779..ed72072 100755
+--- a/doit
++++ b/doit
+@@ -9,7 +9,7 @@ instlib() {
+ }
+ 
+ [ dropbear/default_options.h -nt dropbear/default_options_guard.h ] && dropbear/ifndef_wrapper.sh < dropbear/default_options.h > dropbear/default_options_guard.h
+-~/Android/Sdk/ndk-bundle/ndk-build -j8 &&
++${ANDROID_HOME}/ndk-bundle/ndk-build -j8 &&
+ mkdir -p app/src/main/lib/armeabi-v7a &&
+ instlib scp libscp.so &&
+ instlib sftp-server libsftp-server.so &&
+diff --git a/java b/java
+deleted file mode 120000
+index e19930e..0000000
+--- a/java
++++ /dev/null
+@@ -1 +0,0 @@
+-app/src/main/java/org/galexander/sshd/
+\ No newline at end of file
+diff --git a/keystore.properties b/keystore.properties
+deleted file mode 120000
+index e4aa0b9..0000000
+--- a/keystore.properties
++++ /dev/null
+@@ -1 +0,0 @@
+-/home/greg/.android/keystore.properties
+\ No newline at end of file
+diff --git a/local.properties b/local.properties
+index 6d01e43..ddc6676 100644
+--- a/local.properties
++++ b/local.properties
+@@ -5,5 +5,6 @@
+ # For customization when using a Version Control System, please read the
+ # header note.
+ #Sun May 26 20:02:34 EDT 2019
+-ndk.dir=/home/greg/Android/Sdk/ndk-bundle
+-sdk.dir=/home/greg/Android/Sdk
++# uses ANDROID_HOME
++#ndk.dir=/home/greg/Android/Sdk/ndk-bundle
++#sdk.dir=/home/greg/Android/Sdk
