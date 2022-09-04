@@ -1572,17 +1572,95 @@ same broadcast receiver in the XML??
 
 August 25, 2022.
 
-Reimer Prochnow sent a patch to use the new Android 11 permissions!  He
-is disappointed that it does not seem to allow more access than before,
+Reimer Prochnow sent a patch to use the new Android 11 permissions!  They
+are disappointed that it does not seem to allow more access than before,
 but it will nonetheless probably be necessary when I update to the new
 sdk.
 
-Leaving it in reimer_prochnow-manage_extensions.path until then.
+Leaving it in reimer_prochnow-manage_extensions.patch until then.
 
 
+September 4, 2022.
+
+I want to resolve the two big problems for me since Android 11.
+
+The resource starvation is bad.  It is about 50/50 on completing my
+morning rsync, and unfortunately it's streaky so I will go weeks without
+a successful backup, I guess.  And interactively, it seems to get about
+2s of execution out of every 5 minutes, even if the phone is extremely
+active in another app.  It is definitely freezing it, not merely failing
+to keep the CPU hot.  The only way I can think to make progress on this
+is to look in the Android framework and try to figure out what the actual
+heuristic is for freezing.  Or trial and error with dumb things like wake
+locks and so on.  But that's not what they're for!  Ugh.
+
+Oh, I found https://dontkillmyapp.com/oneplus, which led me to some
+stabbing around in the UI.  I found and enabled hidden app settings for
+"auto launch" (which might solve start-on-boot), and "never optimize
+battery", and in the task switcher long-pressed on SimpleSSHD then
+"lock".  And that seems to have done it!  It only starves for resources
+if the phone is asleep!  Well, maybe.  I will have to wait and see.
+
+I can't tell how it's really working, but after about 30 seconds of
+   while true; do date; sleep 1; date
+it stops, but then it immediately resumes the moment I hit enter on my
+terminal!  I'm having a hard time imagining the heuristic it uses to
+detect that event.
+
+Anyways, too bad that's a OnePlus-specific hack that won't help anyone else.
+But I should probably add dontkillmyapp.com to the doc, I guess.
+
+
+The other problem is the inability to trigger an intent from the shell,
+which is single-handedly responsible for me needing a cable just to
+upgrade my own apps.  "am" used to allow this, but it now says (on
+stderr):
+
+   java.lang.SecurityException: Permission Denial:
+   package=com.android.shell does not belong to uid=10278
+
+I googled that and found confirmation of the problem, but no reported
+work-around.  It doesn't matter what I put as --user: none, --user 0,
+--user 278, --user 10278, all the same result.  --user -1 gives a
+different error "Error: Can't start service with user 'all'".  I did find
+a report that "am start-foreground-service" still works but I'm shrugging
+at it.  It has been becoming harder to launch "am" over the years and if
+this isn't when the camel broke, then I think I'd rather not know.
+
+FWIW, the --user 0 one works under 'adb shell'.  Of course.
+
+I want to take the first timid step towards the future nuclear option.  I
+want to make a way for my unix environment to communicate with the java
+side of SimpleSSHD, so that it can launder requests as if they are coming
+from Java.
+
+It seems like something on the order of a named pipe, AF_UNIX socket, or
+a TCP/IP socket is indicated.  The TCP/IP socket could be plausibly
+secure by providing an authentication string in a $SIMPLESSHD_TOKEN env
+var that would authenticate it?
+
+
+And a third problem!  I keep losing the ability to write to /sdcard.
+The upshot is, this time I got it back simply by doing
+"... -> Enable /sdcard" again.  Why does it lose that?  In settings ->
+apps -> SimpleSSHD -> Permissions it says "Allowed Storage All Files",
+but it also says, at the bottom, in small print:
+
+   To protect your data, if the app is unused for a few months, the
+   following permissions will be removed: Storage
+
+Well it hasn't been a few months but it does very much seem like someone
+is removing or degrading the storage permission on some sort of schedule.
+Sigh.
+
+
+XXX - each time it starts, mkdir apiXX (if not present), fill in apiXX/ss_api (if not present), ln -sf apiXX api (overwriting if different), fork a thread in java that listens on 127.0.0.1:port, set $SS_TOKEN, $SS_PORTNO
+XXX - make api for start http intent
+XXX - make api for start apk install intent?
 
 XXX - try MANAGE_EXTERNAL_STORAGE permission -> ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION intent action, will that help??
 
+XXX - should probably add dontkillmyapp.com to the doc
 XXX - why is it 100% starved of foreground service cpu time, unless it happens to have been running when i switched away from the app
 XXX - why won't it start on boot?
 
