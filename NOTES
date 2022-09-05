@@ -1654,6 +1654,12 @@ is removing or degrading the storage permission on some sort of schedule.
 Sigh.
 
 
+September 5, 2022.
+
+The OnePlus 'auto-launch' setting seems to have fixed both start-on-boot
+and start-after-apk-upgrade!  Hooray!
+
+
 XXX - each time it starts, mkdir apiXX (if not present), fill in apiXX/ss_api (if not present), ln -sf apiXX api (overwriting if different), fork a thread in java that listens on 127.0.0.1:port, set $SS_TOKEN, $SS_PORTNO
 XXX - make api for start http intent
 XXX - make api for start apk install intent?
