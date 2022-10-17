@@ -211,11 +211,13 @@ public class SimpleSSHDService extends Service {
 			int rsyncbuffer, String env, String lib);
 	private static native void kill(int pid);
 	private static native int waitpid(int pid);
+	private static native String api_mkfifo(String path);
 	static {
 		System.loadLibrary("simplesshd-jni");
 	}
 
 	public static void do_startService(Context ctx, boolean stop) {
+		if (!stop) api.start(ctx, api_mkfifo(SimpleSSHD.app_private));
 		Intent i = new Intent(ctx, SimpleSSHDService.class);
 		if (stop) {
 			i.putExtra("stop", true);

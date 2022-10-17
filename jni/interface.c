@@ -2,12 +2,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <jni.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <errno.h>
 
 const char *conf_path = "", *conf_shell = "", *conf_home = "", *conf_env = "",
 	*conf_lib = "";
@@ -210,4 +212,29 @@ Java_org_galexander_sshd_SimpleSSHDService_waitpid(JNIEnv *env_, jclass cl,
 		return WEXITSTATUS(status);
 	}
 	return 0;
+}
+
+
+JNIEXPORT jstring JNICALL
+Java_org_galexander_sshd_SimpleSSHDService_api_1mkfifo(JNIEnv *env_,
+	jobject jpath)
+{
+	if (!jni_init(env_)) {
+		return NULL;
+	}
+
+	const char *path = from_java_string(jpath);
+	char *buf = malloc(strlen(path)+100);
+	sprintf(buf, "%s/api", path);
+	if ((mkdir(buf, 0700) < 0) && (errno != EEXIST)) {
+		perror(buf);
+		return NULL;
+	}
+	sprintf(buf, "%s/api/cmd", path);
+	unlink(buf);
+	if (mkfifo(buf, 0666) < 0) {
+		perror(buf);
+		return NULL;
+	}
+	return (*env)->NewStringUTF(env, buf);
 }
