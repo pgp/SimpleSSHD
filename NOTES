@@ -1660,6 +1660,8 @@ The OnePlus 'auto-launch' setting seems to have fixed both start-on-boot
 and start-after-apk-upgrade!  Hooray!
 
 
+XXX - Nazar asks for holding a screen wake lock, i guess we could do it just while the app is open
+
 XXX - each time it starts, mkdir apiXX (if not present), fill in apiXX/ss_api (if not present), ln -sf apiXX api (overwriting if different), fork a thread in java that listens on 127.0.0.1:port, set $SS_TOKEN, $SS_PORTNO
 XXX - make api for start http intent
 XXX - make api for start apk install intent?
