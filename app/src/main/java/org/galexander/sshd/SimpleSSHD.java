@@ -4,11 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.ClipboardManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -291,13 +292,28 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	private void permission_startup() {
-		if(android.os.Build.VERSION.SDK_INT < 23) return;
-		if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) return;
+	public boolean areStoragePermissionsGranted() {
+		// EITHER Android < 6
+		// OR storage permissions granted on Android 6-10
+		// OR all-files permissions granted on Android 11+
+		return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+				(Build.VERSION.SDK_INT < Build.VERSION_CODES.R &&
+						checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) ||
+						(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager());
+	}
 
-		/* already asked once */
-		if(Prefs.get_requested()) return;
-		requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+	public void requestStoragePermissions() {
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+		else {
+			// with Android >= 11, by having this signature permission granted by user, we can access all files (both read and write, even external sd and usb drives)
+			Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:" + getPackageName()));
+			startActivityForResult(intent, 0);
+		}
+	}
+
+	private void permission_startup() {
+		if(!areStoragePermissionsGranted()) requestStoragePermissions();
 	}
 
 	private void toast(String s) {
@@ -309,14 +325,25 @@ public class SimpleSSHD extends Activity
 			toast("Your phone uses an Android version that grants external storage access by default.");
 			return;
 		}
-		if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+		if(areStoragePermissionsGranted()) {
 			toast("External storage permission already granted.");
 			return;
 		}
-		requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+		requestStoragePermissions();
 	}
 
 	public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
 		Prefs.set_requested();	/* whatever result, don't ask again */
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 0) {
+			if(!areStoragePermissionsGranted()) {
+				toast("Storage permissions not granted, exiting...");
+				finishAffinity();
+			}
+		}
 	}
 }
