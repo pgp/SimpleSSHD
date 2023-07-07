@@ -60,8 +60,11 @@ void svr_authinitialise(SSHConnOptions connOptions) {
 		char pw[DROPBEAR_MAX_PASSWORD_LEN] = "";
 		int i;
 		ses.authstate.authtypes = AUTH_TYPE_PASSWORD;
-		if(connOptions.useExplicitFixedPassword)
-			memcpy(pw, connOptions.explicitFixedPassword, DROPBEAR_MAX_PASSWORD_LEN);
+		if(connOptions.useExplicitFixedPassword) {
+			strcpy(pw, connOptions.explicitFixedPassword);
+			dropbear_log(LOG_WARNING, "using explicit fixed password (see app preferences)");
+//			dropbear_log(LOG_ALERT, "%s", pw);
+		}
 		else {
 			genrandom((uint8_t*)pw, 8);
 			for(i = 0; i < 8; i++) pw[i] = tab64[pw[i] & 63];

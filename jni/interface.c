@@ -12,7 +12,7 @@
 #include <errno.h>
 
 const char *conf_path = "", *conf_shell = "", *conf_home = "", *conf_env = "",
-	*conf_lib = "";
+	*conf_lib = "", *conf_ssh_server_password = "";
 int conf_rsyncbuffer = 0;
 
 /* NB - this will leak memory like crazy if called often.... */
@@ -30,6 +30,7 @@ static jclass cl_string;
 static jclass cl_simplesshdservice;
 
 extern int dropbear_main(int argc, char **argv);
+extern const char* global_ssh_server_password;
 
 static int
 jni_init(JNIEnv *env_)
@@ -131,15 +132,16 @@ null_atexit(void)
 JNIEXPORT jint JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jclass cl,
-	jint port, jstring jpath, jstring jshell, jstring jhome, jstring jextra,
+	jint port, jstring jsshserverpassword,
+	jstring jpath, jstring jshell, jstring jhome, jstring jextra,
 	jint rsyncbuffer, jstring jenv, jstring jlib)
 {
 	pid_t pid;
 	const char *extra;
 
-	if (!jni_init(env_)) {
-		return 0;
-	}
+	if(!jni_init(env_))return 0;
+
+	conf_ssh_server_password = from_java_string(jsshserverpassword);
 	conf_path = from_java_string(jpath);
 	conf_shell = from_java_string(jshell);
 	conf_home = from_java_string(jhome);
@@ -187,6 +189,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		argc += split_cmd(extra, &argv[argc],
 				(sizeof argv / sizeof *argv) - argc);
 		fprintf(stderr, "starting dropbear\n");
+
+		if(strlen(conf_ssh_server_password) > 0) global_ssh_server_password = conf_ssh_server_password;
 		retval = dropbear_main(argc, argv);
 		/* NB - probably not reachable */
 		fprintf(stderr, "dropbear finished (%d)\n", retval);

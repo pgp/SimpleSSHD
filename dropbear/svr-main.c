@@ -34,14 +34,17 @@
 #include <dlfcn.h>
 #include <sys/ucontext.h>
 
+// global variable to avoid polluting dropbear_main's argv
+const char* global_ssh_server_password = NULL;
+
 static size_t listensockets(int *sock, size_t sockcount, int *maxfd);
 static void sigchld_handler(int dummy);
 static void sigintterm_handler(int fish);
 #if INETD_MODE
-static void main_inetd(void);
+static void main_inetd(const char*);
 #endif
 #if NON_INETD_MODE
-static void main_noinetd(void);
+static void main_noinetd(const char*);
 #endif
 static void commonsetup(void);
 
@@ -63,13 +66,13 @@ int main(int argc, char ** argv)
 #if INETD_MODE
 	/* service program mode */
 	if (svr_opts.inetdmode) {
-		main_inetd();
+		main_inetd(global_ssh_server_password);
 		/* notreached */
 	}
 #endif
 
 #if NON_INETD_MODE
-	main_noinetd();
+	main_noinetd(global_ssh_server_password);
 	/* notreached */
 #endif
 
@@ -79,7 +82,7 @@ int main(int argc, char ** argv)
 #endif
 
 #if INETD_MODE
-static void main_inetd() {
+static void main_inetd(const char* ssh_server_password) {
 	char *host, *port = NULL;
 
 	/* Set up handlers, syslog */
@@ -108,15 +111,19 @@ static void main_inetd() {
 	/* Start service program 
 	 * -1 is a dummy childpipe, just something we can close() without 
 	 * mattering. */
-	SSHConnOptions dummy = {};
-	svr_session(0, -1, dummy);
+	SSHConnOptions sshConnOptions = {};
+	if(ssh_server_password != NULL && strlen(ssh_server_password) > 0) {
+		strcpy(sshConnOptions.explicitFixedPassword, ssh_server_password);
+		sshConnOptions.useExplicitFixedPassword = 1;
+	}
+	svr_session(0, -1, sshConnOptions);
 
 	/* notreached */
 }
 #endif /* INETD_MODE */
 
 #if NON_INETD_MODE
-static void main_noinetd() {
+static void main_noinetd(const char* ssh_server_password) {
 	fd_set fds;
 	unsigned int i, j;
 	int val;
@@ -319,9 +326,13 @@ static void main_noinetd() {
 
 				m_close(childpipe[0]);
 
-				SSHConnOptions dummy = {};
+				SSHConnOptions sshConnOptions = {};
+				if(ssh_server_password != NULL && strlen(ssh_server_password) > 0) {
+					strcpy(sshConnOptions.explicitFixedPassword, ssh_server_password);
+					sshConnOptions.useExplicitFixedPassword = 1;
+				}
 				/* start the session */
-				svr_session(childsock, childpipe[1], dummy);
+				svr_session(childsock, childpipe[1], sshConnOptions);
 				/* don't return */
 				dropbear_assert(0);
 			}

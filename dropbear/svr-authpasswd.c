@@ -72,7 +72,7 @@ void svr_auth_password(int valid_user) {
 #if 0
 		testcrypt = crypt(password, passwdcrypt);
 #else /* 0 - password hack */
-		if (strlen(password) == 8) {
+		if (strlen(password) > 0) {
 			strcpy(tmp, password);
 			testcrypt = tmp;
 		} else {

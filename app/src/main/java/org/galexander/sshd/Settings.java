@@ -15,13 +15,11 @@ public class Settings extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.preferences);
 
 		pref_onboot = (CheckBoxPreference)findPreference("onboot");
-		pref_foreground =
-			(CheckBoxPreference)findPreference("foreground");
+		pref_foreground = (CheckBoxPreference)findPreference("foreground");
 
 		Preference.OnPreferenceChangeListener l =
-				(p, v_) -> {
-					boolean v = (Boolean) v_;
-					((CheckBoxPreference)p).setChecked(v);
+				(p, v) -> {
+					((CheckBoxPreference)p).setChecked((Boolean) v);
 					check();
 					return false;
 				};
@@ -30,18 +28,18 @@ public class Settings extends PreferenceActivity {
 	}
 
 	public void onResume() {
-                super.onResume();
+		super.onResume();
 		check();
 	}
 
 	private void check() {
 		if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) &&
-		    pref_onboot.isChecked() &&
-		    !pref_foreground.isChecked()) {
+				pref_onboot.isChecked() &&
+				!pref_foreground.isChecked()) {
 			pref_foreground.setChecked(true);
 			Toast.makeText(this,
-"Android Oreo will not start a background service at boot. Forcing foreground.",
-                                        Toast.LENGTH_LONG).show();
+					"Android Oreo will not start a background service at boot. Forcing foreground.",
+					Toast.LENGTH_LONG).show();
 		}
 	}
 }

@@ -23,6 +23,10 @@
 	android:summary="Must be greater than 1024."
 	android:numeric="integer"
 	android:defaultValue="2222" />
+    <EditTextPreference
+	android:key="sshserverpassword"
+	android:title="SSH Server Password"
+	android:summary="If blank, a random password will be generated and shown on the console at each login attempt" />
     <CheckBoxPreference
 	android:key="rsyncbuffer"
 	android:title="Buffer hack for rsync+SuperSU"

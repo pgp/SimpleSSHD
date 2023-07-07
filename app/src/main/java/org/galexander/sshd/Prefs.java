@@ -27,13 +27,15 @@ public class Prefs {
 		return pref.getBoolean("rsyncbuffer", false);
 	}
 	public static int get_port() {
-		int ret;
 		try {
-			ret = Integer.parseInt(pref.getString("port", "2222"));
-		} catch (Exception e) {
-			ret = 2222;
+			return Integer.parseInt(pref.getString("port", "2222"));
 		}
-		return ret;
+		catch (Exception e) {
+			return 2222;
+		}
+	}
+	public static String get_ssh_server_password() {
+		return pref.getString("sshserverpassword", "");
 	}
 	public static String get_path() {
 		return pref.getString("path", SimpleSSHD.app_private);
