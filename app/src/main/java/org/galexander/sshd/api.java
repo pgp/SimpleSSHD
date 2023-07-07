@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 public class api {
-	private static AtomicReference<Thread> curr_thread = null;
+	private static final AtomicReference<Thread> curr_thread = new AtomicReference<>(null);
 
 		/* assumes JNI api_mkfifo() has already completed */
 	public static void start(final Context ctx, final String fn) {
