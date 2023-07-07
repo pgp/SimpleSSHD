@@ -131,8 +131,8 @@ null_atexit(void)
 JNIEXPORT jint JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jclass cl,
-	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra,
-	jint rsyncbuffer, jobject jenv, jobject jlib)
+	jint port, jstring jpath, jstring jshell, jstring jhome, jstring jextra,
+	jint rsyncbuffer, jstring jenv, jstring jlib)
 {
 	pid_t pid;
 	const char *extra;
@@ -202,7 +202,7 @@ Java_org_galexander_sshd_SimpleSSHDService_kill(JNIEnv *env_, jclass cl,
 	kill(pid, SIGKILL);
 }
 
-JNIEXPORT int JNICALL
+JNIEXPORT jint JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_waitpid(JNIEnv *env_, jclass cl,
 			jint pid)
 {
@@ -216,8 +216,8 @@ Java_org_galexander_sshd_SimpleSSHDService_waitpid(JNIEnv *env_, jclass cl,
 
 
 JNIEXPORT jstring JNICALL
-Java_org_galexander_sshd_SimpleSSHDService_api_1mkfifo(JNIEnv *env_,
-	jobject jpath)
+Java_org_galexander_sshd_SimpleSSHDService_api_1mkfifo(JNIEnv *env_, jclass cl,
+	jstring jpath)
 {
 	if (!jni_init(env_)) {
 		return NULL;
