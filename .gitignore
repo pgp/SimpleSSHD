@@ -4,3 +4,11 @@ dropbear/default_options_guard.h
 build/
 app/build/
 local.properties
+
+# ignore binary files (libraries)
+obj/
+app/src/main/lib/*/*.so
+
+# ignore generated apk paths
+app/debug/
+app/release/

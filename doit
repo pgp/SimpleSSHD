@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 instlib() {
 	for i in `ls libs`
 	do
@@ -9,12 +11,12 @@ instlib() {
 }
 
 [ dropbear/default_options.h -nt dropbear/default_options_guard.h ] && dropbear/ifndef_wrapper.sh < dropbear/default_options.h > dropbear/default_options_guard.h
-~/Android/Sdk/ndk-bundle/ndk-build -j8 &&
+~/Android/Sdk/ndk/21.3.6528147/ndk-build -j8 &&
 mkdir -p app/src/main/lib/armeabi-v7a &&
 instlib scp libscp.so &&
 instlib sftp-server libsftp-server.so &&
 instlib rsync librsync.so &&
 instlib buffersu libbuffersu.so &&
-instlib libsimplesshd-jni.so "" &&
-./gradlew assembleRelease &&
-andinst app/build/outputs/apk/release/app-release.apk
+instlib libsimplesshd-jni.so "" # &&
+#./gradlew assembleRelease &&
+#andinst app/build/outputs/apk/release/app-release.apk
