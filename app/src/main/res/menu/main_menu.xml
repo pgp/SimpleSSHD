@@ -10,8 +10,6 @@ button list in res/layout/main_tv.xml -->
     <item android:id="@+id/resetkeys"
           android:icon="@android:drawable/ic_secure"
           android:title="Reset Keys" />
-    <item android:id="@+id/trypermission"
-          android:title="Enable /sdcard" />
     <item android:id="@+id/doc"
           android:icon="@android:drawable/ic_menu_help"
           android:title="Documentation" />
