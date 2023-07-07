@@ -1,1 +1,6 @@
 dropbear/default_options_guard.h
+.gradle/
+.idea/
+build/
+app/build/
+local.properties
