@@ -236,7 +236,8 @@ int fuzz_run_preauth(const uint8_t *Data, size_t Size, int skip_kexmaths) {
 
     m_malloc_set_epoch(1);
     if (setjmp(fuzz.jmp) == 0) {
-        svr_session(fakesock, fakesock);
+        SSHConnOptions dummy = {};
+        svr_session(fakesock, fakesock, dummy);
         m_malloc_free_epoch(1, 0);
     } else {
         m_malloc_free_epoch(1, 1);

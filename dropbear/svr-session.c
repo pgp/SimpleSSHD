@@ -102,7 +102,7 @@ svr_session_cleanup(void) {
 #endif
 }
 
-void svr_session(int sock, int childpipe) {
+void svr_session(int sock, int childpipe, SSHConnOptions connOptions) {
 	char *host, *port;
 	size_t len;
 
@@ -167,7 +167,7 @@ void svr_session(int sock, int childpipe) {
         }
 #endif
 
-	svr_authinitialise();
+	svr_authinitialise(connOptions);
 	chaninitialise(svr_chantypes);
 	svr_chansessinitialise();
 	svr_algos_initialise();

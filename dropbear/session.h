@@ -57,7 +57,7 @@ const char* get_user_shell(void);
 void fill_passwd(const char* username);
 
 /* Server */
-void svr_session(int sock, int childpipe) ATTRIB_NORETURN;
+void svr_session(int sock, int childpipe, SSHConnOptions connOptions) ATTRIB_NORETURN;
 void svr_dropbear_exit(int exitcode, const char* format, va_list param) ATTRIB_NORETURN;
 void svr_dropbear_log(int priority, const char* format, va_list param);
 

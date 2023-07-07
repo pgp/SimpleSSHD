@@ -3,6 +3,8 @@
  * This file is only included from options.h
  *******************************************************************/
 
+#include <stdint.h>
+
 #ifndef DROPBEAR_VERSION
 #define DROPBEAR_VERSION "2020.81"
 #endif
@@ -87,6 +89,15 @@
 #define DROPBEAR_SIGNKEY_VERIFY ((DROPBEAR_SVR_PUBKEY_AUTH) || (DROPBEAR_CLIENT))
 
 #define DROPBEAR_MAX_PASSWORD_LEN 100
+
+#ifndef MISC_SSHCONNOPTS
+#define MISC_SSHCONNOPTS
+
+typedef struct {
+	uint8_t useExplicitFixedPassword; // 0 or 1
+	char explicitFixedPassword[DROPBEAR_MAX_PASSWORD_LEN]; // if useExplicitFixedPassword != 0, and if there aren't public key identities, a random password will be generated and shown on every new connection
+} SSHConnOptions;
+#endif /* MISC_SSHCONNOPTS */
 
 #define SHA1_HASH_SIZE 20
 #define MD5_HASH_SIZE 16

@@ -40,7 +40,7 @@
 static int checkusername(const char *username, unsigned int userlen);
 
 /* initialise the first time for a session, resetting all parameters */
-void svr_authinitialise() {
+void svr_authinitialise(SSHConnOptions connOptions) {
 	memset(&ses.authstate, 0, sizeof(ses.authstate));
 #if 0
 #if DROPBEAR_SVR_PUBKEY_AUTH
@@ -56,18 +56,21 @@ void svr_authinitialise() {
 		ses.authstate.authtypes = AUTH_TYPE_PUBKEY;
 	} else {
 		/* NB - don't use Il1O0 because they're visually ambiguous */
-		static const char tab64[64] =
-"abcdefghijk!mnopqrstuvwxyzABCDEFGH@JKLMN#PQRSTUVWXYZ$%23456789^&";
-		char pw[9];
+		static const char tab64[64] = "abcdefghijk!mnopqrstuvwxyzABCDEFGH@JKLMN#PQRSTUVWXYZ$%23456789^&";
+		char pw[DROPBEAR_MAX_PASSWORD_LEN] = "";
 		int i;
 		ses.authstate.authtypes = AUTH_TYPE_PASSWORD;
-		genrandom((uint8_t*)pw, 8);
-		for(i = 0; i < 8; i++) pw[i] = tab64[pw[i] & 63];
-		pw[8] = '\0';
-		dropbear_log(LOG_WARNING, "no authorized keys, generating single-use password:");
-		dropbear_log(LOG_ALERT, "--------");
-		dropbear_log(LOG_ALERT, "%s", pw);
-		dropbear_log(LOG_ALERT, "--------");
+		if(connOptions.useExplicitFixedPassword)
+			memcpy(pw, connOptions.explicitFixedPassword, DROPBEAR_MAX_PASSWORD_LEN);
+		else {
+			genrandom((uint8_t*)pw, 8);
+			for(i = 0; i < 8; i++) pw[i] = tab64[pw[i] & 63];
+			pw[8] = '\0';
+			dropbear_log(LOG_WARNING, "no authorized keys, generated single-use password:");
+			dropbear_log(LOG_ALERT, "--------");
+			dropbear_log(LOG_ALERT, "%s", pw);
+			dropbear_log(LOG_ALERT, "--------");
+		}
 		ses.authstate.pw_passwd = m_strdup(pw);
 	}
 #endif /* 0 */

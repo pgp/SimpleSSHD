@@ -29,7 +29,7 @@
 #include "signkey.h"
 #include "chansession.h"
 
-void svr_authinitialise(void);
+void svr_authinitialise(SSHConnOptions connOptions);
 void cli_authinitialise(void);
 
 /* Server functions */

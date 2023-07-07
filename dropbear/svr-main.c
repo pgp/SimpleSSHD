@@ -108,7 +108,8 @@ static void main_inetd() {
 	/* Start service program 
 	 * -1 is a dummy childpipe, just something we can close() without 
 	 * mattering. */
-	svr_session(0, -1);
+	SSHConnOptions dummy = {};
+	svr_session(0, -1, dummy);
 
 	/* notreached */
 }
@@ -318,8 +319,9 @@ static void main_noinetd() {
 
 				m_close(childpipe[0]);
 
+				SSHConnOptions dummy = {};
 				/* start the session */
-				svr_session(childsock, childpipe[1]);
+				svr_session(childsock, childpipe[1], dummy);
 				/* don't return */
 				dropbear_assert(0);
 			}
