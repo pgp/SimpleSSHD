@@ -1,31 +1,30 @@
 package org.galexander.sshd;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.os.Bundle;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.Intent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
 import android.text.ClipboardManager;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.net.Uri;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.BufferedReader;
-import java.net.NetworkInterface;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
-import android.Manifest;
 
 public class SimpleSSHD extends Activity
 {
@@ -130,58 +129,46 @@ public class SimpleSSHD extends Activity
 	public void about_clicked(View v) {
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
 		b.setCancelable(true);
-		b.setPositiveButton("OK",
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface di, int which) { }
-			});
+		b.setPositiveButton("OK", (d, w) -> {});
 		b.setIcon(android.R.drawable.ic_dialog_info);
 		b.setTitle("About");
 		b.setMessage(
-"SimpleSSHD version " + my_version() +
-"\ndropbear 2020.81" +
-"\nscp/sftp from OpenSSH 6.7p1" +
-"\nrsync 3.1.1");
+				"SimpleSSHD version " + my_version() +
+						"\ndropbear 2020.81" +
+						"\nscp/sftp from OpenSSH 6.7p1" +
+						"\nrsync 3.1.1");
 		b.show();
 	}
 
 
 	private void update_startstop_prime() {
 		if (SimpleSSHDService.is_started()) {
-			startstop_view.setText(
-				Prefs.get_onopen() ? "QUIT" : "STOP");
-			startstop_view.setTextColor(
-				is_tv ? 0xFFFF6666 : 0xFF881111);
+			startstop_view.setText(Prefs.get_onopen() ? "QUIT" : "STOP");
+			startstop_view.setTextColor(is_tv ? 0xFFFF6666 : 0xFF881111);
 		} else {
 			startstop_view.setText("START");
-			startstop_view.setTextColor(
-				is_tv ? 0xFF44FF44 : 0xFF118811);
+			startstop_view.setTextColor(is_tv ? 0xFF44FF44 : 0xFF118811);
 		}
 	}
 
 	private static void run_on_ui(Runnable r) {
-		synchronized (lock) {
-			if (curr != null) {
-				curr.runOnUiThread(r);
-			}
+		synchronized(lock) {
+			if(curr != null) curr.runOnUiThread(r);
 		}
 	}
 
 	public static void update_startstop() {
-		run_on_ui(new Runnable() { public void run() {
-			synchronized (lock) {
-				if (curr != null) {
-					curr.update_startstop_prime();
-				}
+		run_on_ui(() -> {
+			synchronized(lock) {
+				if(curr != null) curr.update_startstop_prime();
 			}
-		} });
+		});
 	}
 
 	public void startstop_clicked(View v) {
 		boolean already_started = SimpleSSHDService.is_started();
 		SimpleSSHDService.do_startService(this, already_started);
-		if (already_started && Prefs.get_onopen()) {
-			finish();
-		}
+		if(already_started && Prefs.get_onopen()) finish();
 	}
 
 	private void update_log_prime() {
@@ -190,23 +177,24 @@ public class SimpleSSHD extends Activity
 		boolean wrapped = false;
 		try {
 			File f = new File(Prefs.get_path(), "dropbear.err");
-			if (f.exists()) {
-				BufferedReader r = new BufferedReader(
-							new FileReader(f));
+			if(f.exists()) {
+				BufferedReader r = new BufferedReader(new FileReader(f));
 				try {
 					String l;
-					while ((l = r.readLine()) != null) {
+					while((l = r.readLine()) != null) {
 						lines[curr_line++] = l;
-						if (curr_line >= lines.length) {
+						if(curr_line >= lines.length) {
 							curr_line = 0;
 							wrapped = true;
 						}
 					}
-				} finally {
+				}
+				finally {
 					r.close();
 				}
 			}
-		} catch (Exception e) { }
+		}
+		catch(Exception ignored) { }
 		int i;
 		i = (wrapped ? curr_line : 0);
 		String output = "";
@@ -220,13 +208,11 @@ public class SimpleSSHD extends Activity
 	}
 
 	public static void update_log() {
-		run_on_ui(new Runnable() { public void run() {
+		run_on_ui(() -> {
 			synchronized (lock) {
-				if (curr != null) {
-					curr.update_log_prime();
-				}
+				if(curr != null) curr.update_log_prime();
 			}
-		} });
+		});
 	}
 
 	public static String get_ip(boolean pretty) {
@@ -257,30 +243,24 @@ public class SimpleSSHD extends Activity
 					}
 				}
 			}
-		} catch (Exception ex) { } // for now eat exceptions
+		}
+		catch (Exception ignored) { } // for now swallow exceptions
 		return ret;
 	}
 
 	private void copy_app_private() {
 		new AlertDialog.Builder(this)
 		  .setCancelable(true)
-		  .setPositiveButton("OK",
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface di,
-					int which) { }
-			})
+		  .setPositiveButton("OK", null)
 		  .setNegativeButton("Copy",
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface di,
-					int which) {
-					ClipboardManager cl = (ClipboardManager)
-						getSystemService(
-						Context.CLIPBOARD_SERVICE);
-					if (cl != null) {
-						cl.setText(app_private);
-					}
-				}
-			})
+				  (d, w) -> {
+					  ClipboardManager cl = (ClipboardManager)
+						  getSystemService(
+						  Context.CLIPBOARD_SERVICE);
+					  if (cl != null) {
+						  cl.setText(app_private);
+					  }
+				  })
 		  .setIcon(android.R.drawable.ic_dialog_info)
 		  .setTitle("App-private path")
 		  .setMessage(app_private)
@@ -294,16 +274,8 @@ public class SimpleSSHD extends Activity
 	private void reset_keys() {
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
 		b.setCancelable(true);
-		b.setPositiveButton("Yes",
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface di,
-					int which) { do_reset_keys(); }
-			});
-		b.setNegativeButton("No",
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface di,
-					int which) { }
-			});
+		b.setPositiveButton("Yes", (d, w) -> do_reset_keys());
+		b.setNegativeButton("No", null);
 		b.setIcon(android.R.drawable.ic_dialog_alert);
 		b.setTitle("Reset Keys");
 		b.setMessage("Delete the authorized_keys file? (then you will only be able to login with single-use passwords)");
@@ -313,22 +285,19 @@ public class SimpleSSHD extends Activity
 	public String my_version() {
 		try {
 			return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-		} catch (Exception e) {
+		}
+		catch(Exception e) {
 			return "UNKNOWN";
 		}
 	}
 
 	private void permission_startup() {
-		if (android.os.Build.VERSION.SDK_INT < 23) {
-			return;
-		}
-		if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-			return;
-		}
-		if (Prefs.get_requested()) {	/* already asked once */
-			return;
-		}
-		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+		if(android.os.Build.VERSION.SDK_INT < 23) return;
+		if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) return;
+
+		/* already asked once */
+		if(Prefs.get_requested()) return;
+		requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 	}
 
 	private void toast(String s) {
@@ -344,7 +313,7 @@ public class SimpleSSHD extends Activity
 			toast("External storage permission already granted.");
 			return;
 		}
-		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+		requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 	}
 
 	public void onRequestPermissionsResult(int code, String[] perms, int[] results) {

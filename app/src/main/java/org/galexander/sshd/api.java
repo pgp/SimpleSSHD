@@ -19,11 +19,8 @@ public class api {
 	public static void start(final Context ctx, final String fn) {
 		if (fn == null) return;
 		if (curr_thread.get() != null) return;
-		Thread t = new Thread() { public void run() {
-						thread_main(ctx, fn); } };
-		if (curr_thread.compareAndSet(null, t)) {
-			t.start();
-		}
+		Thread t = new Thread(()->thread_main(ctx, fn));
+		if(curr_thread.compareAndSet(null, t)) t.start();
 	}
 
 	private static String get_line(FileInputStream fis) throws IOException {

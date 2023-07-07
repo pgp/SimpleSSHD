@@ -8,23 +8,21 @@ public class UpdaterThread extends Thread {
 		File f = new File(Prefs.get_path(), "dropbear.err");
 		long lastmod = 0;
 		long lastlen = 0;
-		while (true) {
-			if (isInterrupted()) {
-				break;
-			}
-			if (SimpleSSHD.curr == null) {
-				break;
-			}
+		for(;;) {
+			if(isInterrupted()) break;
+
+			if(SimpleSSHD.curr == null) break;
 			long mod = f.lastModified();
 			long len = f.length();
-			if ((mod != lastmod) || (len != lastlen)) {
+			if((mod != lastmod) || (len != lastlen)) {
 				SimpleSSHD.update_log();
 				lastmod = mod;
 				lastlen = len;
 			}
-			try {
+			try{
 				sleep(1000);
-			} catch (InterruptedException e) {
+			}
+			catch(InterruptedException e) {
 				break;
 			}
 		}

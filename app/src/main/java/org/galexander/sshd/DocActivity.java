@@ -6,9 +6,8 @@ import android.webkit.WebView;
 
 public class DocActivity extends Activity
 {
-	public static final String url =
-			"http://www.galexander.org/software/simplesshd";
-	private WebView wv = null;
+	public static final String url = "http://www.galexander.org/software/simplesshd";
+	private WebView wv;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

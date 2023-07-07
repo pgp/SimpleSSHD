@@ -29,7 +29,7 @@ public class Prefs {
 	public static int get_port() {
 		int ret;
 		try {
-			ret = Integer.valueOf(pref.getString("port", "2222"));
+			ret = Integer.parseInt(pref.getString("port", "2222"));
 		} catch (Exception e) {
 			ret = 2222;
 		}
@@ -56,7 +56,7 @@ public class Prefs {
 	public static void set_requested() {
 		SharedPreferences.Editor edit = pref.edit();
 		edit.putBoolean("requested", true);
-		edit.commit();
+		edit.apply();
 	}
 
 	/* NB - other defaults can be filled in by either Prefs or Settings as
@@ -74,6 +74,6 @@ public class Prefs {
 		if (need_home) {
 			edit.putString("home", SimpleSSHD.app_private);
 		}
-		edit.commit();
+		edit.apply();
 	}
 };

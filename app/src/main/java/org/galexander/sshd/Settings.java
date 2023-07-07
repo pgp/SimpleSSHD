@@ -18,15 +18,13 @@ public class Settings extends PreferenceActivity {
 		pref_foreground =
 			(CheckBoxPreference)findPreference("foreground");
 
-		Preference.OnPreferenceChangeListener l = 
-			new Preference.OnPreferenceChangeListener() {
-				public boolean onPreferenceChange(Preference p,
-					Object v_) {
-					boolean v =((Boolean)v_).booleanValue();
+		Preference.OnPreferenceChangeListener l =
+				(p, v_) -> {
+					boolean v = (Boolean) v_;
 					((CheckBoxPreference)p).setChecked(v);
 					check();
 					return false;
-				} };
+				};
 		pref_onboot.setOnPreferenceChangeListener(l);
 		pref_foreground.setOnPreferenceChangeListener(l);
 	}

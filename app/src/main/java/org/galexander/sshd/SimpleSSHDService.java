@@ -170,12 +170,10 @@ public class SimpleSSHDService extends Service {
 						? (now - sshd_when) : 0);
 				sshd_when = now;
 			}
-			(new Thread() {
-				public void run() {
-					waitpid(pid);
-					maybe_restart(pid);
-					SimpleSSHD.update_startstop();
-				}
+			new Thread(() -> {
+				waitpid(pid);
+				maybe_restart(pid);
+				SimpleSSHD.update_startstop();
 			}).start();
 		}
 		SimpleSSHD.update_startstop();
@@ -185,17 +183,17 @@ public class SimpleSSHDService extends Service {
 		try {
 			File f = new File(Prefs.get_path(), "dropbear.pid");
 			int pid = 0;
-			if (f.exists()) {
+			if(f.exists()) {
 				BufferedReader r = new BufferedReader(
 							new FileReader(f));
 				try {
-					pid =
-						Integer.valueOf(r.readLine());
-				} finally {
+					pid = Integer.parseInt(r.readLine());
+				}
+				finally {
 					r.close();
 				}
 			}
-			if (pid != 0) {
+			if(pid != 0) {
 				synchronized (lock) {
 					stop_sshd();
 					sshd_pid = pid;
@@ -203,7 +201,8 @@ public class SimpleSSHDService extends Service {
 					sshd_duration = 0;
 				}
 			}
-		} catch (Exception e) { /* *shrug* */ }
+		}
+		catch(Exception ignored) { /* *shrug* */ }
 	}
 
 	private static native int start_sshd(int port, String path,
