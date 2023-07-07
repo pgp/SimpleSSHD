@@ -61,11 +61,9 @@ void svr_authinitialise() {
 		char pw[9];
 		int i;
 		ses.authstate.authtypes = AUTH_TYPE_PASSWORD;
-		genrandom((unsigned char *)pw, 8);
-		for (i = 0; i < 8; i++) {
-			pw[i] = tab64[pw[i] & 63];
-		}
-		pw[8] = 0;
+		genrandom((uint8_t*)pw, 8);
+		for(i = 0; i < 8; i++) pw[i] = tab64[pw[i] & 63];
+		pw[8] = '\0';
 		dropbear_log(LOG_WARNING, "no authorized keys, generating single-use password:");
 		dropbear_log(LOG_ALERT, "--------");
 		dropbear_log(LOG_ALERT, "%s", pw);

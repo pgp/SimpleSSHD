@@ -346,8 +346,19 @@ void seedrandom() {
 
 /* return len bytes of pseudo-random data */
 void genrandom(unsigned char* buf, unsigned int len) {
+	int fd = open("/dev/urandom", O_RDONLY);
+	int32_t remaining = len;
+	while(remaining > 0) {
+		ssize_t readBytes =	read(fd, buf, len);
+		if(readBytes <= 0) {
+			perror("Unable to read more bytes from /dev/shm");
+			break;
+		}
+		remaining -= readBytes;
+	}
+	close(fd);
 
-	hash_state hs;
+	/*hash_state hs;
 	unsigned char hash[SHA1_HASH_SIZE];
 	unsigned int copylen;
 
@@ -371,7 +382,7 @@ void genrandom(unsigned char* buf, unsigned int len) {
 		len -= copylen;
 		buf += copylen;
 	}
-	m_burn(hash, sizeof(hash));
+	m_burn(hash, sizeof(hash));*/
 }
 
 /* Generates a random mp_int. 
