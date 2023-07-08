@@ -13,7 +13,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-import androidx.core.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

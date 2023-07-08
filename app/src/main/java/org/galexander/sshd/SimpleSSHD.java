@@ -132,7 +132,7 @@ public class SimpleSSHD extends Activity
 						"\ndropbear 2020.81" +
 						"\nscp/sftp from OpenSSH 6.7p1" +
 						"\nrsync 3.1.1" +
-						"\nPGP's mod version: 20230707");
+						"\nPGP's mod version: 20230708");
 		b.show();
 	}
 
