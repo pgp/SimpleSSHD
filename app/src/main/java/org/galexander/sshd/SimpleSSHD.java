@@ -14,6 +14,7 @@ import android.text.ClipboardManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -36,9 +37,10 @@ public class SimpleSSHD extends Activity
 	public static SimpleSSHD curr = null;
 	public static String app_private = null;
 	private UpdaterThread updater = null;
-	public static boolean is_tv = false;
+	public final boolean is_tv = this instanceof SimpleSSHDTV;
 
 	public void onCreate(Bundle savedInstanceState) {
+		if(is_tv) requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		app_private = getFilesDir().toString();
 		Prefs.init(this);
