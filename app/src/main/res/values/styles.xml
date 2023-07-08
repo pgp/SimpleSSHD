@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="tv_button" parent="TextAppearance.Leanback">
+	<style name="AppTheme" parent="android:Theme.Holo" />
+    <style name="tv_button" parent="android:TextAppearance.Holo">
 	<item name="android:layout_width">fill_parent</item>
 	<item name="android:layout_height">1dp</item>
 	<item name="android:layout_weight">1</item>
