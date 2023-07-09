@@ -9,7 +9,7 @@
 #endif
 
 /* Default hostkey paths - these can be specified on the command line */
-#define DSS_PRIV_FILENAME conf_path_file("dropbear_dss_host_key")
+// #define DSS_PRIV_FILENAME conf_path_file("dropbear_dss_host_key")
 #define RSA_PRIV_FILENAME conf_path_file("dropbear_rsa_host_key")
 #define ECDSA_PRIV_FILENAME conf_path_file("dropbear_ecdsa_host_key")
 #define ED25519_PRIV_FILENAME conf_path_file("dropbear_ed25519_host_key")
@@ -75,12 +75,12 @@ much traffic. */
  * Including multiple keysize variants the same cipher 
  * (eg AES256 as well as AES128) will result in a minimal size increase.*/
 #define DROPBEAR_AES128 1
-#define DROPBEAR_3DES 1
+// #define DROPBEAR_3DES 1
 #define DROPBEAR_AES256 1
 /* Compiling in Blowfish will add ~6kB to runtime heap memory usage */
 //#define DROPBEAR_BLOWFISH 1
-#define DROPBEAR_TWOFISH256 1
-#define DROPBEAR_TWOFISH128 1
+// #define DROPBEAR_TWOFISH256 1
+// #define DROPBEAR_TWOFISH128 1
 
 /* Enable "Counter Mode" for ciphers. This is more secure than normal
  * CBC mode against certain attacks. This adds around 1kB to binary 
@@ -106,10 +106,10 @@ much traffic. */
  * If you disable MD5, Dropbear will fall back to SHA1 fingerprints,
  * which are not the standard form. */
 #define DROPBEAR_SHA1_HMAC 1
-#define DROPBEAR_SHA1_96_HMAC 1
+// #define DROPBEAR_SHA1_96_HMAC 1
 #define DROPBEAR_SHA2_256_HMAC 1
 #define DROPBEAR_SHA2_512_HMAC 1
-#define DROPBEAR_MD5_HMAC 1
+// #define DROPBEAR_MD5_HMAC 1
 
 /* You can also disable integrity. Don't bother disabling this if you're
  * still using a cipher, it's relatively cheap. If you disable this it's dead
@@ -121,7 +121,7 @@ much traffic. */
  * Removing either of these won't save very much space.
  * SSH2 RFC Draft requires dss, recommends rsa */
 #define DROPBEAR_RSA 1
-#define DROPBEAR_DSS 1
+// #define DROPBEAR_DSS 1
 /* ECDSA is significantly faster than RSA or DSS. Compiling in ECC
  * code (either ECDSA or ECDH) increases binary size - around 30kB
  * on x86-64 */
