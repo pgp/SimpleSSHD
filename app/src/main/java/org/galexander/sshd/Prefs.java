@@ -8,7 +8,7 @@ public class Prefs {
 	private static SharedPreferences pref = null;
 
 	public static void init(Context c) {
-		if (pref == null) {
+		if(pref == null) {
 			pref = PreferenceManager.getDefaultSharedPreferences(c);
 			set_defaults();
 		}
@@ -30,7 +30,7 @@ public class Prefs {
 		try {
 			return Integer.parseInt(pref.getString("port", "2222"));
 		}
-		catch (Exception e) {
+		catch(Exception e) {
 			return 2222;
 		}
 	}
@@ -66,16 +66,10 @@ public class Prefs {
 	private static void set_defaults() {
 		boolean need_path = (pref.getString("path", null) == null);
 		boolean need_home = (pref.getString("home", null) == null);
-		if (!need_path && !need_home) {
-			return;
-		}
+		if(!need_path && !need_home) return;
 		SharedPreferences.Editor edit = pref.edit();
-		if (need_path) {
-			edit.putString("path", SimpleSSHD.app_private);
-		}
-		if (need_home) {
-			edit.putString("home", SimpleSSHD.app_private);
-		}
+		if(need_path) edit.putString("path", SimpleSSHD.app_private);
+		if(need_home) edit.putString("home", SimpleSSHD.app_private);
 		edit.apply();
 	}
-};
+}
