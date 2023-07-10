@@ -10,6 +10,11 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
+#include <android/log.h>
+
+const char* LOG_TAG = "SimpleSSHD";
+
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 const char *conf_path = "", *conf_shell = "", *conf_home = "", *conf_env = "",
 	*conf_lib = "", *conf_ssh_server_password = "";
@@ -150,6 +155,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	conf_env = from_java_string(jenv);
 	conf_lib = from_java_string(jlib);
 
+	LOGE("Starting with:\nconf_ssh_server_password: %s\nconf_path: %s\nconf_shell: %s\nconf_home: %s\nextra: %s\nconf_rsyncbuffer: %d\nconf_env: %s\nconf_lib: %s", conf_ssh_server_password, conf_path, conf_shell, conf_home, extra, conf_rsyncbuffer, conf_env, conf_lib);
+
 	pid = fork();
 	if (pid == 0) {
 		char *argv[100] = { "sshd", NULL };
@@ -191,6 +198,10 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		fprintf(stderr, "starting dropbear\n");
 
 		if(strlen(conf_ssh_server_password) > 0) global_ssh_server_password = conf_ssh_server_password;
+
+		fprintf(stderr, "actual args to dropbear_main:\n");
+		for(i=0; i<argc; i++) fprintf(stderr, "%s\n", argv[i]);
+
 		retval = dropbear_main(argc, argv);
 		/* NB - probably not reachable */
 		fprintf(stderr, "dropbear finished (%d)\n", retval);

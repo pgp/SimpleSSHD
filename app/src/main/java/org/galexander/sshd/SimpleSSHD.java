@@ -30,7 +30,6 @@ import java.util.List;
 
 public class SimpleSSHD extends Activity
 {
-	private static final Object lock = new Object();
 	private EditText log_view;
 	private Button startstop_view;
 	private TextView ip_view;
@@ -52,9 +51,7 @@ public class SimpleSSHD extends Activity
 
 	public void onResume() {
 		super.onResume();
-		synchronized (lock) {
-			curr = this;
-		}
+		curr = this;
 		permission_startup();
 		update_startstop_prime();
 		updater = new UpdaterThread();
@@ -67,9 +64,7 @@ public class SimpleSSHD extends Activity
 	}
 
 	public void onPause() {
-		synchronized (lock) {
-			curr = null;
-		}
+		curr = null;
 		updater.interrupt();
 		super.onPause();
 	}
@@ -134,13 +129,13 @@ public class SimpleSSHD extends Activity
 						"\ndropbear 2020.81" +
 						"\nscp/sftp from OpenSSH 6.7p1" +
 						"\nrsync 3.1.1" +
-						"\nPGP's mod version: 20230708");
+						"\nPGP's mod version: 20230710");
 		b.show();
 	}
 
 
-	private void update_startstop_prime() {
-		if (SimpleSSHDService.is_started()) {
+	public void update_startstop_prime() {
+		if (SimpleSSHDService.currentSshd != null) {
 			startstop_view.setText(Prefs.get_onopen() ? "QUIT" : "STOP");
 			startstop_view.setTextColor(is_tv ? 0xFFFF6666 : 0xFF881111);
 		} else {
@@ -150,16 +145,12 @@ public class SimpleSSHD extends Activity
 	}
 
 	private static void run_on_ui(Runnable r) {
-		synchronized(lock) {
-			if(curr != null) curr.runOnUiThread(r);
-		}
+		if(curr != null) curr.runOnUiThread(r);
 	}
 
 	public static void update_startstop() {
 		run_on_ui(() -> {
-			synchronized(lock) {
-				if(curr != null) curr.update_startstop_prime();
-			}
+			if(curr != null) curr.update_startstop_prime();
 		});
 	}
 
@@ -207,9 +198,7 @@ public class SimpleSSHD extends Activity
 
 	public static void update_log() {
 		run_on_ui(() -> {
-			synchronized (lock) {
-				if(curr != null) curr.update_log_prime();
-			}
+			if(curr != null) curr.update_log_prime();
 		});
 	}
 

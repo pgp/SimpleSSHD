@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_CFLAGS    := -O
-LOCAL_MODULE    := simplesshd-jni
+LOCAL_MODULE    := ssshd
 
 DROPBEAR_PATH := ../dropbear
 DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
@@ -475,11 +475,12 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/tcp-accept.c \
 	$(DROPBEAR_PATH)/termcodes.c
 
-LOCAL_SRC_FILES := interface.c $(DROPBEAR_SRCS)
+LOCAL_SRC_FILES := interface_exe.c $(DROPBEAR_SRCS)
 LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
-LOCAL_LDLIBS    := -lz
+LOCAL_CFLAGS += -fPIC -pie
+LOCAL_LDFLAGS += -fPIE -lz -llog -Wl,-E
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_EXECUTABLE)
 
 
 # build separate scp executable
