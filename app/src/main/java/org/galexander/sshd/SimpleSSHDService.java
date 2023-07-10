@@ -48,14 +48,16 @@ public class SimpleSSHDService extends Service {
 		libdir = getApplicationInfo().nativeLibraryDir;
 		if ((intent == null) ||
 		    (!intent.getBooleanExtra("stop", false))) {
-			do_start(getBaseContext());
-			do_foreground();
-			return START_STICKY;
-		} else {
+			if(do_start(getBaseContext())) {
+				do_foreground();
+				return START_STICKY;
+			}
+		}
+		else {
 			stop_sshd();
 			stop_service();
-			return START_NOT_STICKY;
 		}
+		return START_NOT_STICKY;
 	}
 
 	public IBinder onBind(Intent intent) {
@@ -135,7 +137,7 @@ public class SimpleSSHDService extends Service {
 		}
 	}
 
-	private static void do_start(Context context) {
+	private static boolean do_start(Context context) {
 		stop_sshd();
 		new File(Prefs.get_path()).mkdirs();
 
@@ -145,7 +147,7 @@ public class SimpleSSHDService extends Service {
 		Exception lastException = null;
 		Process p = null;
 		try {
-			p = RootHandler.executeCommandSimple(sshdPath.getAbsolutePath(), workingDir, false,
+			p = RootHandler.executeCommandSimple(sshdPath.getAbsolutePath(), workingDir, Prefs.get_run_as_root(),
 					""+Prefs.get_port(),
 					Prefs.get_path(),
 					Prefs.get_home(),
@@ -184,6 +186,7 @@ public class SimpleSSHDService extends Service {
 
 		if(alive) SimpleSSHD.update_startstop();
 		else Toast.makeText(context, "Unable to start ssh server: "+errmsg, Toast.LENGTH_SHORT).show();
+		return alive;
 	}
 
 	private static void read_pidfile() {

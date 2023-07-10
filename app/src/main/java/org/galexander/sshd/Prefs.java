@@ -34,6 +34,9 @@ public class Prefs {
 			return 2222;
 		}
 	}
+	public static boolean get_run_as_root() {
+		return pref.getBoolean("runasroot", false);
+	}
 	public static String get_ssh_server_password() {
 		return pref.getString("sshserverpassword", "");
 	}

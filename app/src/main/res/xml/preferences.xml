@@ -28,6 +28,11 @@
 	android:title="SSH Server Password"
 	android:summary="If blank, a random password will be generated and shown on the console at each login attempt" />
     <CheckBoxPreference
+	android:key="runasroot"
+	android:title="Run as root"
+	android:summary="If root access is available, will try to run the ssh server in root mode"
+	android:defaultValue="false" />
+    <CheckBoxPreference
 	android:key="rsyncbuffer"
 	android:title="Buffer hack for rsync+SuperSU"
 	android:defaultValue="false" />
