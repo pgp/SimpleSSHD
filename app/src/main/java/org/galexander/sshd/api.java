@@ -55,7 +55,7 @@ public class api {
 		final int len = s.length();
 		while (ofs < len) {
 			while ((ofs < len) &&
-			       Character.isSpace(s.charAt(ofs))) {
+			       Character.isWhitespace(s.charAt(ofs))) {
 				ofs++;
 			}
 			if (s.startsWith("-- ", ofs)) {
@@ -64,7 +64,7 @@ public class api {
 			} else if (ofs < len) {
 				int start = ofs;
 				while ((ofs < len) &&
-				       !Character.isSpace(s.charAt(ofs))) {
+				       !Character.isWhitespace(s.charAt(ofs))) {
 					ofs++;
 				}
 				ret.add(s.substring(start, ofs-start));
