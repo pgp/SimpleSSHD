@@ -92,10 +92,10 @@ int main(int argc, char* argv[]) {
         puts("Usage: sshd [portNum] [conf_path] [conf_home] [optionalPassword]");
         _Exit(0);
     }
+
     char* portstr = argv[1]; // context getFilesDir, can be passed as env var XSSHD_CONF
     conf_path = argv[2]; // context getFilesDir, can be passed as env var XSSHD_CONF
     conf_home = argv[3]; // context getFilesDir or /sdcard, can be passed as env var XSSHD_HOME
-    // conf_lib as working directory, pass from RootHandler (parent of libsshd-jni.so)
 
     char* conf_pass = NULL;
     if(argc >= 5) conf_pass = argv[4];
@@ -134,6 +134,26 @@ int main(int argc, char* argv[]) {
             nargv[nargc++] = "-p";
             nargv[nargc++] = portstr;
         }
+
+        //////////////////////////////////////////////
+        int j;
+        fprintf(stderr, "******************************\nOriginal args from caller:\n");
+        for(j=0;j<argc;j++) {
+            fprintf(stderr, "%s\n", argv[j]);
+        }
+        fprintf(stderr, "******************************\n");
+        //////////////////////////////////////////////
+
+        // conf_lib as working directory, passed from RootHandler (parent of libsshd-jni.so)
+        conf_lib = calloc(1,1024);
+        if(getcwd(conf_lib, 1024) == NULL) {
+            fprintf(stderr, "Unable to set working directory");
+            _Exit(-1);
+        }
+        else {
+            fprintf(stderr, "Working directory: %s\n", conf_lib);
+        }
+
         fprintf(stderr, "starting dropbear\n");
 
         if(conf_pass) global_ssh_server_password = conf_pass;

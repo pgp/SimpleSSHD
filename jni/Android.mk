@@ -475,10 +475,10 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/tcp-accept.c \
 	$(DROPBEAR_PATH)/termcodes.c
 
-LOCAL_SRC_FILES := interface_exe.c $(DROPBEAR_SRCS)
-LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
-LOCAL_CFLAGS += -fPIC -pie
-LOCAL_LDFLAGS += -fPIE -lz -llog -Wl,-E
+LOCAL_SRC_FILES  := interface_exe.c $(DROPBEAR_SRCS)
+LOCAL_C_INCLUDES := dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
+LOCAL_CFLAGS     += -fPIC -pie
+LOCAL_LDFLAGS    += -fPIE -lz -llog -Wl,-E
 
 include $(BUILD_EXECUTABLE)
 
@@ -491,12 +491,12 @@ LOCAL_CFLAGS    := -Wall -O
 LOCAL_MODULE    := scp
 
 DROPBEAR_PATH := ../dropbear
-LOCAL_SRC_FILES := $(DROPBEAR_PATH)/scp.c \
+LOCAL_SRC_FILES  := $(DROPBEAR_PATH)/scp.c \
 	$(DROPBEAR_PATH)/scpmisc.c \
 	$(DROPBEAR_PATH)/atomicio.c
-LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
-# LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   :=
+LOCAL_C_INCLUDES := dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
+LOCAL_CFLAGS     += -fPIC -pie
+LOCAL_LDFLAGS    := -fPIE
 
 include $(BUILD_EXECUTABLE)
 
@@ -524,9 +524,9 @@ LOCAL_SRC_FILES := $(OPENSSH_PATH)/sftp-server-main.c \
 	$(OPENSSH_PATH)/openbsd-compat/getopt_long.c \
 	$(OPENSSH_PATH)/openbsd-compat/pwcache.c \
 	$(OPENSSH_PATH)/openbsd-compat/strmode.c
-LOCAL_C_INCLUDES:= openssh
-# LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   :=
+LOCAL_C_INCLUDES := openssh
+LOCAL_CFLAGS     += -fPIC -pie
+LOCAL_LDFLAGS    := -fPIE
 
 include $(BUILD_EXECUTABLE)
 
@@ -602,9 +602,9 @@ LOCAL_SRC_FILES := $(RSYNC_PATH)/flist.c \
 	$(RSYNC_PATH)/zlib/compress.c \
 	$(RSYNC_PATH)/zlib/crc32.c
 
-LOCAL_C_INCLUDES:= rsync rsync/popt rsync/zlib
-LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   :=
+LOCAL_C_INCLUDES := rsync rsync/popt rsync/zlib
+LOCAL_CFLAGS     += -fPIC -pie
+LOCAL_LDFLAGS    := -fPIE
 
 include $(BUILD_EXECUTABLE)
 
