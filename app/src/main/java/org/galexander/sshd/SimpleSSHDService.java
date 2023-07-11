@@ -1,57 +1,39 @@
 package org.galexander.sshd;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-import android.support.v4.app.NotificationCompat;
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.FileReader;
-import java.util.List;
 
 import it.pgp.xfiles.utils.RootHandler;
 
 public class SimpleSSHDService extends Service {
-		/* if restarting twice within 10 seconds, give up */
-	private static final int MIN_DURATION = 10000;
 
-	private static final Object lock = new Object();
+	public static Process currentSshd;
 	private static int sshd_pid = 0;
-	private static long sshd_when = 0;
-	private static long sshd_duration = 0;
 	private static boolean foregrounded = false;
-	private static String libdir = null;
 
-	static Process currentSshd;
-
+	@Override
 	public void onCreate() {
 		super.onCreate();
-
 		Prefs.init(this);
-
-		read_pidfile();
-
 		stop_sshd();	/* it would be stale anyways */
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		libdir = getApplicationInfo().nativeLibraryDir;
-		if ((intent == null) ||
+		if((intent == null) ||
 		    (!intent.getBooleanExtra("stop", false))) {
-			if(do_start(getBaseContext())) {
-				do_foreground();
-				return START_STICKY;
-			}
+			if(do_start(getBaseContext())) do_foreground();
 		}
 		else {
 			stop_sshd();
@@ -103,16 +85,18 @@ public class SimpleSSHDService extends Service {
 		}
 	}
 
+	private static NotificationChannel notificationChannel;
 	private void create_notification_channel() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			NotificationChannel nc = new NotificationChannel(
-				"main", "SimpleSSHD",
-				NotificationManager.IMPORTANCE_LOW);
-			nc.enableLights(false);
-			nc.enableVibration(false);
-			nc.setSound(null, null);
-			getSystemService(NotificationManager.class)
-				.createNotificationChannel(nc);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			if(notificationChannel == null) {
+				notificationChannel = new NotificationChannel(
+						"main", "SimpleSSHD",
+						NotificationManager.IMPORTANCE_LOW);
+				notificationChannel.enableLights(false);
+				notificationChannel.enableVibration(false);
+				notificationChannel.setSound(null, null);
+				((NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE)).createNotificationChannel(notificationChannel);
+			}
 		}
 	}
 
@@ -125,16 +109,17 @@ public class SimpleSSHDService extends Service {
 			// TODO this won't work with root
 			android.os.Process.sendSignal(sshd_pid,2); // SIGINT
 			currentSshd = null;
-			SimpleSSHD.update_startstop();
+			sshd_pid = 0;
+			if(SimpleSSHD.curr != null) SimpleSSHD.curr.update_startstop();
 		}
 	}
 
 	private void stop_service() {
-		stopSelf();
-		if (foregrounded) {
+		if(foregrounded) {
 			stopForeground(true);
 			foregrounded = false;
 		}
+		stopSelf();
 	}
 
 	private static boolean do_start(Context context) {
@@ -159,13 +144,6 @@ public class SimpleSSHDService extends Service {
 			lastException = e;
 		}
 
-//		final int pid = start_sshd(Prefs.get_port(),
-//			Prefs.get_ssh_server_password(),
-//			Prefs.get_path(), Prefs.get_shell(),
-//			Prefs.get_home(), Prefs.get_extra(),
-//			(Prefs.get_rsyncbuffer() ? 1 : 0),
-//			Prefs.get_env(), libdir);
-
 		currentSshd = p;
 		sshd_pid = p == null ? 0 : (int)RootHandler.getPidOfProcess(p);
 
@@ -184,35 +162,10 @@ public class SimpleSSHDService extends Service {
 			catch(Exception ignored) {}
 		}
 
-		if(alive) SimpleSSHD.update_startstop();
+		if(alive)
+			if(SimpleSSHD.curr != null) SimpleSSHD.curr.update_startstop();
 		else Toast.makeText(context, "Unable to start ssh server: "+errmsg, Toast.LENGTH_SHORT).show();
 		return alive;
-	}
-
-	private static void read_pidfile() {
-		try {
-			File f = new File(Prefs.get_path(), "dropbear.pid");
-			int pid = 0;
-			if(f.exists()) {
-				BufferedReader r = new BufferedReader(
-							new FileReader(f));
-				try {
-					pid = Integer.parseInt(r.readLine());
-				}
-				finally {
-					r.close();
-				}
-			}
-			if(pid != 0) {
-				synchronized (lock) {
-					stop_sshd();
-					sshd_pid = pid;
-					sshd_when = 0;
-					sshd_duration = 0;
-				}
-			}
-		}
-		catch(Exception ignored) { /* *shrug* */ }
 	}
 
 	public static void do_startService(Context ctx, boolean stop) {
@@ -221,41 +174,6 @@ public class SimpleSSHDService extends Service {
 			i.putExtra("stop", true);
 		}
 		Prefs.init(ctx);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			if (Prefs.get_foreground()) {
-				ctx.startForegroundService(i);
-			} else if (!(ctx instanceof Activity)) {
-				Toast.makeText(ctx,
-"SimpleSSHD cannot start in background since Oreo (enable Settings -> Foreground Service).",
-					Toast.LENGTH_LONG).show();
-			} else if (is_foreground_app(ctx)) {
-				ctx.startService(i);
-			} else {
-				/* The OS put us in SimpleSSHD.onResume() even
-				 * though it's not ready to put an app activity
-				 * in the foreground yet!  Just give up.  Maybe
-				 * the OS will try again? */
-			}
-		} else {
-			ctx.startService(i);
-		}
-	}
-
-	/* There's a bug in Android 9 Pie (SDK 28) where onResume() is called
-	 * during wake-up when the OS isn't ready to put the app in the
-	 * foreground, so startService() fails.  This should detect that state.
-	 * This code is copy-pasted from stackoverflow, and initially comes from
-	 * a Google bug report on the issue? */
-	public static boolean is_foreground_app(Context ctx) {
-		ActivityManager am = (ActivityManager)ctx.getSystemService(
-				Context.ACTIVITY_SERVICE);
-		List<ActivityManager.RunningAppProcessInfo> procs =
-				am.getRunningAppProcesses();
-		if (procs == null) {
-			return false;
-		}
-		// higher importance has lower number (?)
-		return (procs.get(0).importance <=
-		   ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND);
+		ctx.startService(i);
 	}
 }

@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.ClipboardManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +39,8 @@ public class SimpleSSHD extends Activity
 	public static String app_private = null;
 	private UpdaterThread updater = null;
 	public final boolean is_tv = this instanceof SimpleSSHDTV;
+
+	public static final Handler h = new Handler(Looper.getMainLooper());
 
 	public void onCreate(Bundle savedInstanceState) {
 		if(is_tv) requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -129,10 +133,9 @@ public class SimpleSSHD extends Activity
 						"\ndropbear 2020.81" +
 						"\nscp/sftp from OpenSSH 6.7p1" +
 						"\nrsync 3.1.1" +
-						"\nPGP's mod version: 20230710");
+						"\nPGP's mod version: 20230711");
 		b.show();
 	}
-
 
 	public void update_startstop_prime() {
 		if (SimpleSSHDService.currentSshd != null) {
@@ -144,14 +147,8 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	private static void run_on_ui(Runnable r) {
-		if(curr != null) curr.runOnUiThread(r);
-	}
-
-	public static void update_startstop() {
-		run_on_ui(() -> {
-			if(curr != null) curr.update_startstop_prime();
-		});
+	public void update_startstop() {
+		h.post(this::update_startstop_prime);
 	}
 
 	public void startstop_clicked(View v) {
@@ -196,10 +193,8 @@ public class SimpleSSHD extends Activity
 		log_view.setSelection(output.length());
 	}
 
-	public static void update_log() {
-		run_on_ui(() -> {
-			if(curr != null) curr.update_log_prime();
-		});
+	public void update_log() {
+		h.post(this::update_log_prime);
 	}
 
 	public static String get_ip(boolean pretty) {

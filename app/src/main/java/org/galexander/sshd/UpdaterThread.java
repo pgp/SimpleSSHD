@@ -12,18 +12,20 @@ public class UpdaterThread extends Thread {
 			if(isInterrupted()) break;
 
 			if(SimpleSSHD.curr == null) break;
-			long mod = f.lastModified();
-			long len = f.length();
-			if((mod != lastmod) || (len != lastlen)) {
-				SimpleSSHD.update_log();
-				lastmod = mod;
-				lastlen = len;
-			}
-			try{
-				sleep(1000);
-			}
-			catch(InterruptedException e) {
-				break;
+			else {
+				long mod = f.lastModified();
+				long len = f.length();
+				if((mod != lastmod) || (len != lastlen)) {
+					SimpleSSHD.curr.update_log();
+					lastmod = mod;
+					lastlen = len;
+				}
+				try{
+					sleep(1000);
+				}
+				catch(InterruptedException e) {
+					break;
+				}
 			}
 		}
 	}
