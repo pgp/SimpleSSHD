@@ -33,6 +33,42 @@
 #include <unwind.h>
 #include <dlfcn.h>
 #include <sys/ucontext.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+/************************************************ inotify stuff ************************************************/
+#include <sys/inotify.h>
+#include <pthread.h>
+
+int inotify_fd; // inotify file descriptor
+
+void* inotify_thread_fn(void* unused) {
+    char inotify_buf[1024];
+    struct inotify_event* the_inotify_event;
+
+    fprintf(stderr, "inotify thread fn started\n");
+
+    // read events from inotify file descriptor
+    ssize_t inotify_num_read = read(inotify_fd, inotify_buf, 1024);
+    if(inotify_num_read == 0) {
+        fprintf(stderr, "read() from inotify fd returned 0\n");
+        _Exit(-4);
+    }
+    if (inotify_num_read < 0) {
+        perror("read");
+        _Exit(-5);
+    }
+
+    // process the events in the buffer
+    the_inotify_event = (struct inotify_event*)inotify_buf;
+    if(the_inotify_event->mask & IN_DELETE) {
+        fprintf(stderr, "pidfile deleted, exiting...\n");
+        _Exit(0);
+    }
+    return NULL;
+}
+/***************************************************************************************************************/
+
 
 // global variable to avoid polluting dropbear_main's argv
 const char* global_ssh_server_password = NULL;
@@ -62,6 +98,31 @@ int main(int argc, char ** argv)
 
 	/* get commandline options */
 	svr_getopts(argc, argv);
+
+    int inotify_wd; // inotify watch descriptor
+    pthread_t inotify_thread;
+	// if the server is run as root, setup an inotify observer in order to stop the server when the pidfile is deleted (from the user who started the server)
+    // this workaround is used because normal processes without the proper setcap, cannot send signals (e.g. SIGINT, SIGTERM) to root processes
+    if(geteuid()==0) {
+        fprintf(stderr, "inotify enabled\n");
+        // create an inotify instance
+        inotify_fd = inotify_init();
+        if(inotify_fd == -1) {
+            perror("inotify_init");
+            _Exit(-2);
+        }
+        // inotify_wd = inotify_add_watch(inotify_fd, svr_opts.pidfile, IN_DELETE);
+        char* inotify_folder = DROPBEAR_PIDFOLDER;
+        inotify_wd = inotify_add_watch(inotify_fd, inotify_folder, IN_DELETE); // TODO should check which file has been deleted, since the watch is on the whole parent folder
+        fprintf(stderr, "Added inotify watch on deletion on parent folder of file %s\n", svr_opts.pidfile);
+
+        int status = pthread_create(&inotify_thread, NULL, inotify_thread_fn, NULL);
+        if(status != 0) {
+            perror("pthread_create");
+            _Exit(-3);
+        }
+
+    }
 
 #if INETD_MODE
 	/* service program mode */

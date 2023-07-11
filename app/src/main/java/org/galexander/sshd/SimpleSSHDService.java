@@ -106,11 +106,26 @@ public class SimpleSSHDService extends Service {
 
 	private static void stop_sshd() {
 		if(currentSshd != null) {
-			// TODO this won't work with root
-			android.os.Process.sendSignal(sshd_pid,2); // SIGINT
-			currentSshd = null;
-			sshd_pid = 0;
-			if(SimpleSSHD.curr != null) SimpleSSHD.curr.update_startstop();
+			if(Prefs.get_run_as_root()) { // TODO must check if ACTUALLY run as root, not if preference was set accordingly
+				// delete pidfile, inotify on server side will make the process terminate
+				try {
+					File f = new File(Prefs.get_path(), "dropbear.pid");
+					if(!f.delete()) throw new Exception();
+					currentSshd = null;
+					sshd_pid = 0;
+					if(SimpleSSHD.curr != null) SimpleSSHD.curr.update_startstop();
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				android.os.Process.sendSignal(sshd_pid,2); // SIGINT
+				currentSshd = null;
+				sshd_pid = 0;
+				if(SimpleSSHD.curr != null) SimpleSSHD.curr.update_startstop();
+			}
+
 		}
 	}
 
