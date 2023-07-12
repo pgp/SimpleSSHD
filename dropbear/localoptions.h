@@ -239,7 +239,8 @@ much traffic. */
 
 /* The default file to store the daemon's process ID, for shutdown
    scripts etc. This can be overridden with the -P flag */
-#define DROPBEAR_PIDFILE ((char *)conf_path_file("dropbear.pid"))
+#define DROPBEAR_PID_FILENAME_ONLY "dropbear.pid"
+#define DROPBEAR_PIDFILE ((char *)conf_path_file(DROPBEAR_PID_FILENAME_ONLY))
 #define DROPBEAR_PIDFOLDER ((char *)conf_path_file("."))
 
 /* The command to invoke for xauth when using X11 forwarding.

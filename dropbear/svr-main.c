@@ -48,23 +48,26 @@ void* inotify_thread_fn(void* unused) {
 
     fprintf(stderr, "inotify thread fn started\n");
 
-    // read events from inotify file descriptor
-    ssize_t inotify_num_read = read(inotify_fd, inotify_buf, 1024);
-    if(inotify_num_read == 0) {
-        fprintf(stderr, "read() from inotify fd returned 0\n");
-        _Exit(-4);
-    }
-    if (inotify_num_read < 0) {
-        perror("read");
-        _Exit(-5);
+    for(;;) {
+        // read events from inotify file descriptor
+        ssize_t inotify_num_read = read(inotify_fd, inotify_buf, 1024);
+        if(inotify_num_read == 0) {
+            fprintf(stderr, "read() from inotify fd returned 0\n");
+            _Exit(-4);
+        }
+        if(inotify_num_read < 0) {
+            perror("read");
+            _Exit(-5);
+        }
+
+        // process the events in the buffer
+        the_inotify_event = (struct inotify_event*)inotify_buf;
+        if((the_inotify_event->mask & IN_DELETE) && strcmp(the_inotify_event->name, DROPBEAR_PID_FILENAME_ONLY) == 0) {
+            fprintf(stderr, "pid file %s deleted, exiting...\n", the_inotify_event->name);
+            _Exit(0);
+        }
     }
 
-    // process the events in the buffer
-    the_inotify_event = (struct inotify_event*)inotify_buf;
-    if(the_inotify_event->mask & IN_DELETE) {
-        fprintf(stderr, "pidfile deleted, exiting...\n");
-        _Exit(0);
-    }
     return NULL;
 }
 /***************************************************************************************************************/
