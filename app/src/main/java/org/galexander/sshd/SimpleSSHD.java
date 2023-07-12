@@ -22,9 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
@@ -37,7 +35,7 @@ public class SimpleSSHD extends Activity
 	private TextView ip_view;
 	public static SimpleSSHD curr = null;
 	public static String app_private = null;
-	private UpdaterThread updater = null;
+	public static UpdaterThread updater = null;
 	public final boolean is_tv = this instanceof SimpleSSHDTV;
 
 	public static final Handler h = new Handler(Looper.getMainLooper());
@@ -48,9 +46,9 @@ public class SimpleSSHD extends Activity
 		app_private = getFilesDir().toString();
 		Prefs.init(this);
 		setContentView(is_tv ? R.layout.main_tv : R.layout.main);
-		log_view = (EditText)findViewById(R.id.log);
-		startstop_view = (Button)findViewById(R.id.startstop);
-		ip_view = (TextView)findViewById(R.id.ip);
+		log_view = findViewById(R.id.log);
+		startstop_view = findViewById(R.id.startstop);
+		ip_view = findViewById(R.id.ip);
 	}
 
 	public void onResume() {
@@ -58,18 +56,14 @@ public class SimpleSSHD extends Activity
 		curr = this;
 		permission_startup();
 		update_startstop_prime();
-		updater = new UpdaterThread();
-		updater.start();
 		ip_view.setText(get_ip(true));
 
-		if (Prefs.get_onopen() && !SimpleSSHDService.is_started()) {
-			SimpleSSHDService.do_startService(this, /*stop=*/false);
-		}
+		if (Prefs.get_onopen() && !SimpleSSHDService.is_started())
+			SimpleSSHDService.do_startService(this, false);
 	}
 
 	public void onPause() {
 		curr = null;
-		updater.interrupt();
 		super.onPause();
 	}
 
@@ -133,7 +127,7 @@ public class SimpleSSHD extends Activity
 						"\ndropbear 2020.81" +
 						"\nscp/sftp from OpenSSH 6.7p1" +
 						"\nrsync 3.1.1" +
-						"\nPGP's mod version: 20230711");
+						"\nPGP's mod version: 20230712");
 		b.show();
 	}
 
@@ -141,9 +135,19 @@ public class SimpleSSHD extends Activity
 		if (SimpleSSHDService.currentSshd != null) {
 			startstop_view.setText(Prefs.get_onopen() ? "QUIT" : "STOP");
 			startstop_view.setTextColor(is_tv ? 0xFFFF6666 : 0xFF881111);
-		} else {
+			if(updater == null) {
+				log_view.setText("");
+				updater = new UpdaterThread();
+				updater.start();
+			}
+		}
+		else {
 			startstop_view.setText("START");
 			startstop_view.setTextColor(is_tv ? 0xFF44FF44 : 0xFF118811);
+			if(updater != null) {
+				updater.interrupt();
+				updater = null;
+			}
 		}
 	}
 
@@ -157,44 +161,11 @@ public class SimpleSSHD extends Activity
 		if(already_started && Prefs.get_onopen()) finish();
 	}
 
-	private void update_log_prime() {
-		String[] lines = new String[50];
-		int curr_line = 0;
-		boolean wrapped = false;
-		try {
-			File f = new File(Prefs.get_path(), "dropbear.err");
-			if(f.exists()) {
-				BufferedReader r = new BufferedReader(new FileReader(f));
-				try {
-					String l;
-					while((l = r.readLine()) != null) {
-						lines[curr_line++] = l;
-						if(curr_line >= lines.length) {
-							curr_line = 0;
-							wrapped = true;
-						}
-					}
-				}
-				finally {
-					r.close();
-				}
-			}
-		}
-		catch(Exception ignored) { }
-		int i;
-		i = (wrapped ? curr_line : 0);
-		String output = "";
-		do {
-			output = output + lines[i] + "\n";
-			i++;
-			i %= lines.length;
-		} while (i != curr_line);
-		log_view.setText(output);
-		log_view.setSelection(output.length());
-	}
-
-	public void update_log() {
-		h.post(this::update_log_prime);
+	public void append_line_to_log_view(String line) {
+		h.post(()->{
+			log_view.append(line);
+			log_view.setSelection(log_view.getText().length());
+		});
 	}
 
 	public static String get_ip(boolean pretty) {

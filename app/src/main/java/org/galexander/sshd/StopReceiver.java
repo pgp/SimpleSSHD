@@ -6,6 +6,6 @@ import android.content.Context;
 
 public class StopReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
-                SimpleSSHDService.do_startService(context, /*stop=*/true);
+		SimpleSSHDService.do_startService(context, true);
 	}
 }
