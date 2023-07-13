@@ -1,6 +1,7 @@
 package org.galexander.sshd;
 
 import android.util.Log;
+import android.widget.EditText;
 
 import java.io.File;
 import java.util.Scanner;
@@ -9,6 +10,11 @@ import it.pgp.xfiles.utils.RootHandler;
 
 public class UpdaterThread extends Thread {
 	Process tail;
+	public EditText log_view; // when the activity is destroyed and recreated while the service is active, set this again to continue showing the log
+
+	public UpdaterThread(EditText log_view) {
+		this.log_view = log_view;
+	}
 
 	/* watch changes to the dropbear.err file */
 	public void run() {
@@ -21,7 +27,7 @@ public class UpdaterThread extends Thread {
 					String line = scanner.nextLine();
 					SimpleSSHD curr = SimpleSSHD.curr;
 					if(curr == null) break;
-					else curr.append_line_to_log_view(line+"\n");
+					else curr.append_line_to_log_view(log_view, line+"\n");
 				}
 				Log.d(getClass().getName(), "Updater thread ended");
 			}
