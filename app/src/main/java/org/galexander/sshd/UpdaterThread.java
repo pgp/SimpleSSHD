@@ -10,7 +10,8 @@ import it.pgp.xfiles.utils.RootHandler;
 
 public class UpdaterThread extends Thread {
 	Process tail;
-	public EditText log_view; // when the activity is destroyed and recreated while the service is active, set this again to continue showing the log
+	public final StringBuilder buffer = new StringBuilder();
+	private EditText log_view; // when the activity is destroyed and recreated while the service is active, set this again to continue showing the log
 
 	public UpdaterThread(EditText log_view) {
 		this.log_view = log_view;
@@ -27,7 +28,10 @@ public class UpdaterThread extends Thread {
 					String line = scanner.nextLine();
 					SimpleSSHD curr = SimpleSSHD.curr;
 					if(curr == null) break;
-					else curr.append_line_to_log_view(log_view, line+"\n");
+					else {
+						buffer.append(line + "\n");
+						curr.refresh_log_view(log_view, buffer.toString());
+					}
 				}
 				Log.d(getClass().getName(), "Updater thread ended");
 			}
@@ -35,6 +39,12 @@ public class UpdaterThread extends Thread {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void refreshTextViewOnResume(EditText log_view) {
+		this.log_view = log_view;
+		SimpleSSHD curr = SimpleSSHD.curr;
+		if(curr != null) curr.refresh_log_view(log_view, buffer.toString());
 	}
 
 	@Override

@@ -47,7 +47,6 @@ public class SimpleSSHD extends Activity
 		Prefs.init(this);
 		setContentView(is_tv ? R.layout.main_tv : R.layout.main);
 		log_view = findViewById(R.id.log);
-		if(updater != null) updater.log_view = log_view;
 		startstop_view = findViewById(R.id.startstop);
 		ip_view = findViewById(R.id.ip);
 	}
@@ -56,9 +55,9 @@ public class SimpleSSHD extends Activity
 		super.onResume();
 		curr = this;
 		permission_startup();
+		if(updater != null) updater.refreshTextViewOnResume(log_view);
 		update_startstop_prime();
 		ip_view.setText(get_ip(true));
-
 		if (Prefs.get_onopen() && !SimpleSSHDService.is_started())
 			SimpleSSHDService.do_startService(this, false);
 	}
@@ -161,10 +160,10 @@ public class SimpleSSHD extends Activity
 		if(already_started && Prefs.get_onopen()) finish();
 	}
 
-	public void append_line_to_log_view(EditText log_view, String line) {
+	public void refresh_log_view(EditText log_view, String content) {
 		h.post(()->{
-			log_view.append(line);
-			log_view.setSelection(log_view.getText().length());
+			log_view.setText(content);
+			log_view.setSelection(content.length());
 		});
 	}
 
