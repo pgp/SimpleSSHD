@@ -9,11 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 import it.pgp.xfiles.utils.RootHandler;
 
@@ -69,19 +69,30 @@ public class SimpleSSHDService extends Service {
 			PendingIntent pi = PendingIntent.getActivity(this, 0,
 				new Intent(this, SimpleSSHD.class),
 				PendingIntent.FLAG_UPDATE_CURRENT);
-			Notification n = new NotificationCompat.Builder(
-						this, "main")
-				.setSmallIcon(R.drawable.notification_icon)
-				.setTicker("SimpleSSHD")
-				.setContent(rv)
-				.setContentIntent(pi)
-				.setOngoing(true)
-				.setPriority(NotificationCompat.PRIORITY_LOW)
-				.setLocalOnly(true)
-				.setVisibility(
-					NotificationCompat.VISIBILITY_PUBLIC)
-				.build();
-			startForeground(1, n);
+
+			Notification m = new Notification();
+			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				// set channel id
+				Field f1;
+				try {
+					f1 = m.getClass().getDeclaredField("mChannelId");
+					f1.setAccessible(true);
+					f1.set(m, "main");
+				}
+				catch(Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			m.icon = R.drawable.notification_icon;
+			m.tickerText = "SimpleSSHD";
+			m.contentView = rv;
+			m.contentIntent = pi;
+			m.flags |= 2; // ongoing=true
+			m.priority = Notification.PRIORITY_LOW;
+			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+				m.visibility = Notification.VISIBILITY_PUBLIC;
+			startForeground(1, m);
 		}
 	}
 
