@@ -26,12 +26,9 @@ public class UpdaterThread extends Thread {
 			try(Scanner scanner = new Scanner(tail.getInputStream())) {
 				while(scanner.hasNextLine()) {
 					String line = scanner.nextLine();
+					buffer.append(line + "\n");
 					SimpleSSHD curr = SimpleSSHD.curr;
-					if(curr == null) break;
-					else {
-						buffer.append(line + "\n");
-						curr.refresh_log_view(log_view, buffer.toString());
-					}
+					if(curr != null) curr.refresh_log_view(log_view, buffer.toString());
 				}
 				Log.d(getClass().getName(), "Updater thread ended");
 			}
