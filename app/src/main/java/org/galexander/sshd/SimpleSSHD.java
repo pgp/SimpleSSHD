@@ -55,7 +55,7 @@ public class SimpleSSHD extends Activity
 		super.onResume();
 		curr = this;
 		permission_startup();
-		if(updater != null) updater.refreshTextViewOnResume(log_view);
+		if(updater != null) updater.refreshActivityOnResume(this);
 		update_startstop_prime();
 		ip_view.setText(get_ip(true));
 		if (Prefs.get_onopen() && !SimpleSSHDService.is_started())
@@ -64,6 +64,7 @@ public class SimpleSSHD extends Activity
 
 	public void onPause() {
 		curr = null;
+		if(updater != null) updater.pauseLoggingOnActivityPause();
 		super.onPause();
 	}
 
@@ -127,7 +128,7 @@ public class SimpleSSHD extends Activity
 						"\ndropbear 2020.81" +
 						"\nscp/sftp from OpenSSH 6.7p1" +
 						"\nrsync 3.1.1" +
-						"\nPGP's mod version: 20230713");
+						"\nPGP's mod version: 20230714");
 		b.show();
 	}
 
@@ -136,7 +137,7 @@ public class SimpleSSHD extends Activity
 			startstop_view.setText(Prefs.get_onopen() ? "QUIT" : "STOP");
 			startstop_view.setTextColor(is_tv ? 0xFFFF6666 : 0xFF881111);
 			if(updater == null) {
-				updater = new UpdaterThread(log_view);
+				updater = new UpdaterThread(this);
 				updater.start();
 			}
 		}
@@ -160,7 +161,7 @@ public class SimpleSSHD extends Activity
 		if(already_started && Prefs.get_onopen()) finish();
 	}
 
-	public void refresh_log_view(EditText log_view, String content) {
+	public void refresh_log_view(String content) {
 		h.post(()->{
 			log_view.setText(content);
 			log_view.setSelection(content.length());

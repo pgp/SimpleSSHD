@@ -1,7 +1,6 @@
 package org.galexander.sshd;
 
 import android.util.Log;
-import android.widget.EditText;
 
 import java.io.File;
 import java.util.Scanner;
@@ -11,10 +10,10 @@ import it.pgp.xfiles.utils.RootHandler;
 public class UpdaterThread extends Thread {
 	Process tail;
 	public final StringBuilder buffer = new StringBuilder();
-	private EditText log_view; // when the activity is destroyed and recreated while the service is active, set this again to continue showing the log
+	private SimpleSSHD activity; // when the activity is destroyed and recreated while the service is active, set this again to continue showing the log
 
-	public UpdaterThread(EditText log_view) {
-		this.log_view = log_view;
+	public UpdaterThread(SimpleSSHD activity) {
+		this.activity = activity;
 	}
 
 	/* watch changes to the dropbear.err file */
@@ -27,8 +26,7 @@ public class UpdaterThread extends Thread {
 				while(scanner.hasNextLine()) {
 					String line = scanner.nextLine();
 					buffer.append(line + "\n");
-					SimpleSSHD curr = SimpleSSHD.curr;
-					if(curr != null) curr.refresh_log_view(log_view, buffer.toString());
+					if(activity != null) activity.refresh_log_view(buffer.toString());
 				}
 				Log.d(getClass().getName(), "Updater thread ended");
 			}
@@ -38,10 +36,13 @@ public class UpdaterThread extends Thread {
 		}
 	}
 
-	public void refreshTextViewOnResume(EditText log_view) {
-		this.log_view = log_view;
-		SimpleSSHD curr = SimpleSSHD.curr;
-		if(curr != null) curr.refresh_log_view(log_view, buffer.toString());
+	public void refreshActivityOnResume(SimpleSSHD activity) {
+		this.activity = activity;
+		activity.refresh_log_view(buffer.toString());
+	}
+
+	public void pauseLoggingOnActivityPause() {
+		this.activity = null;
 	}
 
 	@Override
